@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Contrat de location de vélo entre particuliers</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 900px; margin: 20px auto; line-height: 1.5; }
+    h1, h2 { text-align: center; }
+    fieldset { margin-bottom: 20px; padding: 15px; }
+    legend { font-weight: bold; }
+    label { display: block; margin-top: 8px; }
+    input, select, textarea { width: 100%; padding: 6px; margin-top: 4px; box-sizing: border-box; }
+    .cols { display: flex; gap: 20px; }
+    .col { flex: 1; }
+    .sign-block { margin-top: 20px; }
+  </style>
+</head>
+<body>
+
+<h1>CONTRAT DE LOCATION DE VÉLO</h1>
+<h2>ENTRE PARTICULIERS</h2>
+<p>Contrat à compléter et signer avant toute remise du vélo (en deux exemplaires).</p>
+<p>Le locataire atteste être titulaire d'un document d'identité en cours de validité, présenté au propriétaire avant la signature.</p>
+
+<form id="contrat-velo">
+
+  <!-- 1. Bailleur -->
+  <fieldset>
+    <legend>1. Identification du bailleur (propriétaire)</legend>
+    <label>Nom et prénom
+      <input type="text" name="bailleur_nom" required>
+    </label>
+    <label>Adresse
+      <input type="text" name="bailleur_adresse" required>
+    </label>
+    <label>Téléphone
+      <input type="tel" name="bailleur_tel">
+    </label>
+    <label>Email
+      <input type="email" name="bailleur_email">
+    </label>
+  </fieldset>
+
+  <!-- 2. Locataire -->
+  <fieldset>
+    <legend>2. Identification du locataire (utilisateur)</legend>
+    <label>Nom et prénom
+      <input type="text" name="locataire_nom" required>
+    </label>
+    <label>Adresse
+      <input type="text" name="locataire_adresse" required>
+    </label>
+    <label>Téléphone
+      <input type="tel" name="locataire_tel">
+    </label>
+    <label>Email
+      <input type="email" name="locataire_email">
+    </label>
+    <label>Pièce d’identité (type et n°)
+      <input type="text" name="locataire_id">
+    </label>
+  </fieldset>
+
+  <!-- 3. Vélo -->
+  <fieldset>
+    <legend>3. Objet du contrat – Fiche descriptive du vélo</legend>
+    <label>Marque / modèle
+      <input type="text" name="velo_modele">
+    </label>
+    <label>Type
+      <select name="velo_type">
+        <option value="mecanique">Mécanique</option>
+        <option value="electrique">Électrique</option>
+      </select>
+    </label>
+    <label>Numéro de série
+      <input type="text" name="velo_serie">
+    </label>
+    <label>Couleur
+      <input type="text" name="velo_couleur">
+    </label>
+    <label>Kilométrage estimé
+      <input type="number" name="velo_km" min="0">
+    </label>
+    <label>Date d’achat
+      <input type="date" name="velo_date_achat">
+    </label>
+    <label>Valeur à neuf (€)
+      <input type="number" name="velo_val_neuf" min="0" step="0.01">
+    </label>
+    <label>Valeur actuelle estimée (€)
+      <input type="number" name="velo_val_actuelle" min="0" step="0.01">
+    </label>
+    <label>Accessoires fournis
+      <textarea name="velo_accessoires" rows="3"
+        placeholder="Antivol, casque, chargeur, éclairages, kit réparation, panier, etc."></textarea>
+    </label>
+  </fieldset>
+
+  <!-- 4. Durée -->
+  <fieldset>
+    <legend>4. Durée de la location</legend>
+    <div class="cols">
+      <div class="col">
+        <label>Date et heure de début
+          <input type="datetime-local" name="date_debut" required>
+        </label>
+      </div>
+      <div class="col">
+        <label>Date et heure de fin
+          <input type="datetime-local" name="date_fin" required>
+        </label>
+      </div>
+    </div>
+    <label>Retard de restitution (€/heure)
+      <input type="number" name="retard_tarif" min="0" step="0.01">
+    </label>
+  </fieldset>
+
+  <!-- 5. Prix -->
+  <fieldset>
+    <legend>5. Prix et paiement</legend>
+    <label>Tarif de location (€/jour ou €/semaine)
+      <input type="text" name="tarif_location">
+    </label>
+    <label>Montant total estimé (€)
+      <input type="number" name="montant_total" min="0" step="0.01">
+    </label>
+    <label>Dépôt de garantie (€)
+      <input type="number" name="caution" min="0" step="0.01">
+    </label>
+    <label>Mode de paiement
+      <input type="text" name="mode_paiement" placeholder="Espèces / virement / CB / autre">
+    </label>
+  </fieldset>
+
+  <!-- 6. Assurance -->
+  <fieldset>
+    <legend>6. Assurance</legend>
+    <label>Vol
+      <select name="assurance_vol">
+        <option value="non">Non</option>
+        <option value="oui">Oui</option>
+      </select>
+    </label>
+    <label>Casse accidentelle
+      <select name="assurance_casse">
+        <option value="non">Non</option>
+        <option value="oui">Oui</option>
+      </select>
+    </label>
+    <label>Dommages matériels
+      <select name="assurance_dom">
+        <option value="non">Non</option>
+        <option value="oui">Oui</option>
+      </select>
+    </label>
+    <label>Batterie (VAE)
+      <select name="assurance_batterie">
+        <option value="non">Non</option>
+        <option value="oui">Oui</option>
+      </select>
+    </label>
+    <label>Franchise (€)
+      <input type="number" name="franchise" min="0" step="0.01">
+    </label>
+  </fieldset>
+
+  <!-- 7–15 : texte fixe -->
+  <fieldset>
+    <legend>Conditions générales</legend>
+    <p>
+      Le présent contrat a pour objet de définir les conditions dans lesquelles le loueur met temporairement à disposition
+      du Locataire le vélo décrit ci-dessus. Les parties déclarent agir en qualité de particuliers, être juridiquement
+      capables de contracter et accepter l’ensemble des stipulations du présent contrat sans réserve.
+    </p>
+    <p>
+      Le Locataire s’engage à utiliser le vélo de manière prudente, à respecter le Code de la route, à maintenir le vélo
+      en bon état, à utiliser systématiquement l’antivol fourni, à ne pas prêter ou sous-louer le vélo, à ne pas le modifier
+      et à le restituer complet.
+    </p>
+    <p>
+      Le Bailleur s’engage à remettre un vélo conforme à la description, propre, entretenu et en état normal de
+      fonctionnement, sous réserve des réserves indiquées dans l’état des lieux.
+    </p>
+    <p>
+      Les pénalités, responsabilités, données personnelles, état des lieux, droit applicable et modalités de règlement des
+      litiges sont conformes au texte complet du contrat de location de vélo entre particuliers annexé.
+    </p>
+  </fieldset>
+
+  <!-- 16. Signatures -->
+  <fieldset>
+    <legend>16. Signatures</legend>
+    <label>Lieu
+      <input type="text" name="lieu">
+    </label>
+    <label>Date
+      <input type="date" name="date_signature">
+    </label>
+
+    <div class="cols sign-block">
+      <div class="col">
+        <h3>Le Bailleur (propriétaire)</h3>
+        <label>Nom
+          <input type="text" name="bailleur_nom_signature">
+        </label>
+        <p>Mention manuscrite : « Lu et approuvé, bon pour accord »</p>
+        <!-- Zone de signature (à remplacer par un canvas si tu veux une vraie signature dessinée) -->
+        <label>Signature (texte ou image)
+          <input type="text" name="bailleur_signature">
+        </label>
+      </div>
+      <div class="col">
+        <h3>Le Locataire (utilisateur)</h3>
+        <label>Nom
+          <input type="text" name="locataire_nom_signature">
+        </label>
+        <p>Mention manuscrite : « Lu et approuvé, bon pour accord »</p>
+        <label>Signature (texte ou image)
+          <input type="text" name="locataire_signature">
+        </label>
+      </div>
+    </div>
+  </fieldset>
+
+  <button type="submit">Générer / enregistrer le contrat</button>
+</form>
+
+</body>
+</html>
