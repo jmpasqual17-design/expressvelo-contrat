@@ -227,6 +227,8 @@
   </fieldset>
 
   <button type="submit">Générer / enregistrer le contrat</button>
+  <button type="button" id="downloadPDF">Télécharger le contrat en PDF</button>
+
 </form>
 <script>
 const params = new URLSearchParams(window.location.search);
@@ -252,6 +254,28 @@ params.forEach((value, key) => {
     document.getElementById('signatureBailleur').value = signaturePadBailleur.toDataURL();
     document.getElementById('signatureLocataire').value = signaturePadLocataire.toDataURL();
   });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+document.getElementById("downloadPDF").addEventListener("click", async () => {
+  // On récupère la zone à convertir en PDF
+  const element = document.body;
+
+  // On convertit la page en image
+  const canvas = await html2canvas(element, { scale: 2 });
+  const imgData = canvas.toDataURL("image/png");
+
+  // Création du PDF
+  const pdf = new jspdf.jsPDF("p", "mm", "a4");
+  const pdfWidth = pdf.internal.pageSize.getWidth();
+  const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+
+  pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+
+  // Téléchargement
+  pdf.save("contrat-velo-signe.pdf");
+});
 </script>
 
 </body>
