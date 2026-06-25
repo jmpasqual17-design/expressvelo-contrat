@@ -259,24 +259,39 @@ params.forEach((value, key) => {
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
 document.getElementById("downloadPDF").addEventListener("click", async () => {
-  // On récupère la zone à convertir en PDF
-  const element = document.body;
+  const { jsPDF } = jspdf;
 
-  // On convertit la page en image
+  // On capture uniquement le formulaire (pas toute la page)
+  const element = document.getElementById("contrat-velo");
+
+  // Convertir en image
   const canvas = await html2canvas(element, { scale: 2 });
   const imgData = canvas.toDataURL("image/png");
 
-  // Création du PDF
-  const pdf = new jspdf.jsPDF("p", "mm", "a4");
+  // Création PDF A4
+  const pdf = new jsPDF("p", "mm", "a4");
   const pdfWidth = pdf.internal.pageSize.getWidth();
   const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
 
-  pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+  // Si le contenu dépasse une page, on découpe automatiquement
+  let position = 0;
+  let heightLeft = pdfHeight;
 
-  // Téléchargement
+  pdf.addImage(imgData, "PNG", 0, position, pdfWidth, pdfHeight);
+  heightLeft -= pdf.internal.pageSize.getHeight();
+
+  while (heightLeft > 0) {
+    pdf.addPage();
+    position = -pdf.internal.pageSize.getHeight();
+    pdf.addImage(imgData, "PNG", 0, position, pdfWidth, pdfHeight);
+    heightLeft -= pdf.internal.pageSize.getHeight();
+  }
+
+  // Télécharger
   pdf.save("contrat-velo-signe.pdf");
 });
 </script>
+
 
 </body>
 </html>
