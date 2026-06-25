@@ -236,5 +236,23 @@ params.forEach((value, key) => {
 });
 </script>
 <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.5/dist/signature_pad.umd.min.js"></script>
+<script>
+  const canvasBailleur = document.getElementById('signature-bailleur');
+  const canvasLocataire = document.getElementById('signature-locataire');
+
+  const signaturePadBailleur = new SignaturePad(canvasBailleur);
+  const signaturePadLocataire = new SignaturePad(canvasLocataire);
+
+  function clearSignature(type) {
+    if (type === 'bailleur') signaturePadBailleur.clear();
+    if (type === 'locataire') signaturePadLocataire.clear();
+  }
+
+  document.getElementById('contrat-velo').addEventListener('submit', function(e) {
+    document.getElementById('signatureBailleur').value = signaturePadBailleur.toDataURL();
+    document.getElementById('signatureLocataire').value = signaturePadLocataire.toDataURL();
+  });
+</script>
+
 </body>
 </html>
