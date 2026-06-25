@@ -210,15 +210,7 @@
 <canvas id="signature-bailleur" width="300" height="150" style="border:1px solid #000;"></canvas>
 <button type="button" onclick="clearSignature('bailleur')">Effacer</button>
 <input type="hidden" name="signatureBailleur" id="signatureBailleur">
-
-<h3>Signature du locataire</h3>
-<canvas id="signature-locataire" width="300" height="150" style="border:1px solid #000;"></canvas>
-<button type="button" onclick="clearSignature('locataire')">Effacer</button>
-<input type="hidden" name="signatureLocataire" id="signatureLocataire">
 <!-- Zone de signature (à remplacer par un canvas si tu veux une vraie signature dessinée) -->
-        <label>Signature (texte ou image)
-          <input type="text" name="bailleur_signature">
-        </label>
       </div>
       <div class="col">
         <h3>Le Locataire (utilisateur)</h3>
@@ -226,9 +218,10 @@
           <input type="text" name="locataire_nom_signature">
         </label>
         <p>Mention manuscrite : « Lu et approuvé, bon pour accord »</p>
-        <label>Signature (texte ou image)
-          <input type="text" name="locataire_signature">
-        </label>
+<h3>Signature du locataire</h3>
+<canvas id="signature-locataire" width="300" height="150" style="border:1px solid #000;"></canvas>
+<button type="button" onclick="clearSignature('locataire')">Effacer</button>
+<input type="hidden" name="signatureLocataire" id="signatureLocataire">
       </div>
     </div>
   </fieldset>
