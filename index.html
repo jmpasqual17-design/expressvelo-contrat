@@ -206,7 +206,16 @@
           <input type="text" name="bailleur_nom_signature">
         </label>
         <p>Mention manuscrite : « Lu et approuvé, bon pour accord »</p>
-        <!-- Zone de signature (à remplacer par un canvas si tu veux une vraie signature dessinée) -->
+<h3>Signature du bailleur</h3>
+<canvas id="signature-bailleur" width="300" height="150" style="border:1px solid #000;"></canvas>
+<button type="button" onclick="clearSignature('bailleur')">Effacer</button>
+<input type="hidden" name="signatureBailleur" id="signatureBailleur">
+
+<h3>Signature du locataire</h3>
+<canvas id="signature-locataire" width="300" height="150" style="border:1px solid #000;"></canvas>
+<button type="button" onclick="clearSignature('locataire')">Effacer</button>
+<input type="hidden" name="signatureLocataire" id="signatureLocataire">
+<!-- Zone de signature (à remplacer par un canvas si tu veux une vraie signature dessinée) -->
         <label>Signature (texte ou image)
           <input type="text" name="bailleur_signature">
         </label>
