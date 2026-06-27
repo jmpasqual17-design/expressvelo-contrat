@@ -1,173 +1,200 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <title>Contrat de location de vélo entre particuliers</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Contrat de location ExpressVélo</title>
+
   <style>
-    body { font-family: Arial, sans-serif; max-width: 900px; margin: 20px auto; line-height: 1.5; }
-    h1, h2 { text-align: center; }
-    fieldset { margin-bottom: 20px; padding: 15px; }
-    legend { font-weight: bold; }
-    label { display: block; margin-top: 8px; }
-    input, select, textarea { width: 100%; padding: 6px; margin-top: 4px; box-sizing: border-box; }
-    .cols { display: flex; gap: 20px; }
-    .col { flex: 1; }
-    .sign-block { margin-top: 20px; }
+    :root{
+      --blue-dark:#1E3A8A;
+      --blue:#3B82F6;
+      --bg:#F3F4F6;
+      --text:#374151;
+      --muted:#6B7280;
+    }
+
+    html, body { height: 100%; margin: 0; }
+
+    body{
+      font-family: "Inter", Arial, sans-serif;
+      background: var(--bg);
+      padding:20px;
+      color:var(--text);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    .container{
+      width:100%;
+      max-width:760px;
+      background:#fff;
+      padding:28px;
+      border-radius:12px;
+      box-shadow:0 8px 30px rgba(16,24,40,0.08);
+    }
+
+    header{
+      text-align:center;
+      margin-bottom:18px;
+    }
+
+    header h1{
+      margin:0;
+      color:var(--blue-dark);
+      font-size:20px;
+      letter-spacing:0.2px;
+    }
+
+    .meta{
+      text-align:center;
+      color:var(--muted);
+      font-size:13px;
+      margin-top:6px;
+    }
+
+    form .row{
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+
+    label{
+      display:block;
+      font-weight:600;
+      margin-top:14px;
+      font-size:14px;
+    }
+
+    input[type="text"], input[type="date"], textarea, select{
+      width:100%;
+      padding:10px 12px;
+      margin-top:6px;
+      border:1px solid #E5E7EB;
+      border-radius:8px;
+      font-size:15px;
+      color:var(--text);
+      background:#fff;
+    }
+
+    textarea{ min-height:120px; resize:vertical; }
+
+    .small{ max-width:220px; }
+
+    .actions{
+      margin-top:20px;
+      display:flex;
+      gap:12px;
+      align-items:center;
+    }
+
+    .button{
+      background:var(--blue-dark);
+      color:#fff;
+      padding:12px 16px;
+      border-radius:10px;
+      text-decoration:none;
+      font-weight:700;
+      border:none;
+      cursor:pointer;
+    }
+
+    .button.secondary{
+      background:#fff;
+      color:var(--blue-dark);
+      border:1px solid #E5E7EB;
+    }
+
+    .note{
+      margin-top:12px;
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    fieldset {
+      margin-top:16px;
+      border:1px solid #E5E7EB;
+      padding:12px;
+      border-radius:8px;
+      background:#FAFBFC;
+    }
+
+    legend {
+      font-weight:700;
+      padding:0 6px;
+      color:var(--text);
+    }
+
+    /* checkbox style */
+    .checkbox {
+      display:flex;
+      align-items:center;
+      gap:10px;
+      margin-top:10px;
+      cursor:pointer;
+      user-select:none;
+    }
+
+    .checkbox input[type="checkbox"]{
+      width:18px;
+      height:18px;
+      border-radius:4px;
+      border:1px solid #E5E7EB;
+      background:#fff;
+      accent-color: var(--blue-dark);
+    }
+
+    .checkbox-label{
+      font-size:15px;
+      color:var(--text);
+    }
+
+    @media (max-width:520px){
+      .row{ flex-direction:column; }
+    }
   </style>
-  <style>
-  body {
-    font-family: Arial, sans-serif;
-    background: #F3F4F6;
-    margin: 0;
-    padding: 20px;
-  }
-
-  .container {
-    max-width: 700px;
-    margin: auto;
-    background: white;
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-  }
-
-  h1 {
-    color: #1E3A8A;
-    text-align: center;
-    margin-bottom: 20px;
-  }
-
-  label {
-    font-weight: bold;
-    color: #374151;
-    display: block;
-    margin-top: 15px;
-  }
-
-  input, textarea, select {
-    width: 100%;
-    padding: 12px;
-    margin-top: 5px;
-    border: 1px solid #D1D5DB;
-    border-radius: 8px;
-    font-size: 15px;
-  }
-
-  input:focus, textarea:focus {
-    border-color: #3B82F6;
-    outline: none;
-    box-shadow: 0 0 4px rgba(59,130,246,0.4);
-  }
-
-  .button {
-    display: block;
-    width: 100%;
-    background: #1E3A8A;
-    color: white;
-    padding: 15px;
-    border-radius: 10px;
-    text-align: center;
-    font-size: 18px;
-    margin-top: 25px;
-    cursor: pointer;
-    text-decoration: none;
-  }
-
-  .button:hover {
-    background: #3B82F6;
-  }
-</style>
-  
 </head>
 <body>
-  
-  <!-- Ton formulaire ici -->
 
-<h1>CONTRAT DE LOCATION DE VÉLO</h1>
-<h2>ENTRE PARTICULIERS</h2>
-<p>Contrat à compléter et signer avant toute remise du vélo (en deux exemplaires).</p>
-<p>Le locataire atteste être titulaire d'un document d'identité en cours de validité, présenté au propriétaire avant la signature.</p>
+  <div class="container">
+    <header>
+      <h1>Contrat de location ExpressVélo</h1>
+      <div class="meta">Pré‑rempli automatiquement depuis le lien reçu par email</div>
+    </header>
 
-<form id="contrat-velo">
+    <form id="rentalForm">
+      <label for="ownerName">Propriétaire</label>
+      <input type="text" id="ownerName" name="ownerName" placeholder="Nom du propriétaire">
 
-  <!-- 1. Bailleur -->
-  <fieldset>
-    <legend>1. Identification du bailleur (propriétaire)</legend>
-    <label>Nom et prénom
-      <input type="text" name="bailleur_nom" required>
-    </label>
-    <label>Adresse
-      <input type="text" name="bailleur_adresse" required>
-    </label>
-    <label>Téléphone
-      <input type="tel" name="bailleur_tel">
-    </label>
-    <label>Email
-      <input type="email" name="bailleur_email">
-    </label>
-  </fieldset>
+      <label for="renterName">Locataire</label>
+      <input type="text" id="renterName" name="renterName" placeholder="Nom du locataire">
 
-  <!-- 2. Locataire -->
-  <fieldset>
-    <legend>2. Identification du locataire (utilisateur)</legend>
-    <label>Nom et prénom
-      <input type="text" name="locataire_nom" required>
-    </label>
-    <label>Adresse
-      <input type="text" name="locataire_adresse" required>
-    </label>
-    <label>Téléphone
-      <input type="tel" name="locataire_tel">
-    </label>
-    <label>Email
-      <input type="email" name="locataire_email">
-    </label>
-    <label>Pièce d’identité (type et n°)
-      <input type="text" name="locataire_id">
-    </label>
-  </fieldset>
+      <div class="row">
+        <div class="small">
+          <label for="startDate">Date de début</label>
+          <input type="text" id="startDate" name="startDate" placeholder="YYYY-MM-DD ou 24 juin 2026">
+        </div>
 
-  <!-- 3. Vélo -->
-  <fieldset>
-    <legend>3. Objet du contrat – Fiche descriptive du vélo</legend>
-    <p>Le présent contrat porte sur la mise à disposition temporaire, à titre onéreux, 
-      d’un vélo appartenant au Bailleur, identifié dans la fiche descriptive ci-dessous. 
-      Le Locataire reconnaît recevoir le vélo en bon état apparent de fonctionnement, sauf 
-      réserves expressément mentionnées dans l’état des lieux contradictoire établi au départ.</p>
-    <label>Caractéristique du vélo :<label>
-    <label>Marque / modèle
-      <input type="text" name="velo_modele">
-    </label>
-    <label>Type
-      <select name="velo_type">
-        <option value="mecanique">Mécanique</option>
-        <option value="electrique">Électrique</option>
-      </select>
-    </label>
-    <label>Numéro de série
-      <input type="text" name="velo_serie">
-    </label>
-    <label>Couleur
-      <input type="text" name="velo_couleur">
-    </label>
-    <label>Kilométrage estimé
-      <input type="number" name="velo_km" min="0">
-    </label>
-    <label>Date d’achat
-      <input type="date" name="velo_date_achat">
-    </label>
-    <label>Valeur à neuf (€)
-      <input type="number" name="velo_val_neuf" min="0" step="0.01">
-    </label>
-    <label>Valeur actuelle estimée (€)
-      <input type="number" name="velo_val_actuelle" min="0" step="0.01">
-    </label>
-    <label>Accessoires fournis
-      <textarea name="velo_accessoires" rows="3"
-        placeholder="Antivol, casque, chargeur, éclairages, kit réparation, panier, etc."></textarea>
-    </label>
-  </fieldset>
-  <label class="checkbox">
+        <div class="small">
+          <label for="endDate">Date de fin</label>
+          <input type="text" id="endDate" name="endDate" placeholder="YYYY-MM-DD ou 25 juin 2026">
+        </div>
+
+        <div class="small">
+          <label for="bikeModel">Modèle de vélo</label>
+          <input type="text" id="bikeModel" name="bikeModel" placeholder="Ex : VeloCity 3000">
+        </div>
+      </div>
+
+      <label for="notes">Observations</label>
+      <textarea id="notes" name="notes" placeholder="État du vélo, accessoires, caution..."></textarea>
+
+      <!-- Accessoires fournis : cases à cocher -->
+      <fieldset>
+        <legend>Accessoires fournis</legend>
+
+        <label class="checkbox">
           <input type="checkbox" name="extras" value="helmet">
           <span class="checkbox-label">Casque fourni</span>
         </label>
@@ -186,201 +213,80 @@
           <input type="checkbox" name="extras" value="basket">
           <span class="checkbox-label">Panier</span>
         </label>
-       </fieldset>
-  <!-- 4. Durée -->
-  <fieldset>
-    <legend>4. Durée de la location</legend>
-    <div class="cols">
-      <div class="col">
-        <label>Date et heure de début
-          <input type="datetime-local" name="date_debut" required>
+
+        <label class="checkbox">
+          <input type="checkbox" name="terms" value="accepted" required>
+          <span class="checkbox-label">J'ai lu et j'accepte les conditions de location</span>
         </label>
+      </fieldset>
+
+      <div class="actions">
+        <button type="button" class="button" id="saveBtn">Enregistrer</button>
+        <button type="button" class="button secondary" id="downloadBtn">Télécharger PDF</button>
       </div>
-      <div class="col">
-        <label>Date et heure de fin
-          <input type="datetime-local" name="date_fin" required>
-        </label>
-      </div>
-    </div>
-    <label>Retard de restitution (€/heure)
-      <input type="number" name="retard_tarif" min="0" step="0.01">
-    </label>
-  </fieldset>
 
-  <!-- 5. Prix -->
-  <fieldset>
-    <legend>5. Prix et paiement</legend>
-    <label>Tarif de location (€/jour ou €/semaine)
-      <input type="text" name="tarif_location">
-    </label>
-    <label>Montant total estimé (€)
-      <input type="number" name="montant_total" min="0" step="0.01">
-    </label>
-    <label>Dépôt de garantie (€)
-      <input type="number" name="caution" min="0" step="0.01">
-    </label>
-    <label>Mode de paiement
-      <input type="text" name="mode_paiement" placeholder="Espèces / virement / CB / autre">
-    </label>
-  </fieldset>
+      <div class="note">Les champs ownerName, renterName, startDate, endDate et bikeModel peuvent être pré‑remplis via l’URL. Pour pré‑cocher des accessoires, ajoute <code>&amp;extras=helmet,lock</code> à l’URL.</div>
+    </form>
+  </div>
 
-  <!-- 6. Assurance -->
-  <fieldset>
-    <legend>6. Assurance</legend>
-    <label>Vol
-      <select name="assurance_vol">
-        <option value="non">Non</option>
-        <option value="oui">Oui</option>
-      </select>
-    </label>
-    <label>Casse accidentelle
-      <select name="assurance_casse">
-        <option value="non">Non</option>
-        <option value="oui">Oui</option>
-      </select>
-    </label>
-    <label>Dommages matériels
-      <select name="assurance_dom">
-        <option value="non">Non</option>
-        <option value="oui">Oui</option>
-      </select>
-    </label>
-    <label>Batterie (VAE)
-      <select name="assurance_batterie">
-        <option value="non">Non</option>
-        <option value="oui">Oui</option>
-      </select>
-    </label>
-    <label>Franchise (€)
-      <input type="number" name="franchise" min="0" step="0.01">
-    </label>
-  </fieldset>
+  <script>
+    // Pré‑remplissage depuis les paramètres d'URL (y compris extras)
+    (function(){
+      const params = new URLSearchParams(window.location.search);
 
-  <!-- 7–15 : texte fixe -->
-  <fieldset>
-    <legend>Conditions générales</legend>
-    <p>
-      Le présent contrat a pour objet de définir les conditions dans lesquelles le loueur met temporairement à disposition
-      du Locataire le vélo décrit ci-dessus. Les parties déclarent agir en qualité de particuliers, être juridiquement
-      capables de contracter et accepter l’ensemble des stipulations du présent contrat sans réserve.
-    </p>
-    <p>
-      Le Locataire s’engage à utiliser le vélo de manière prudente, à respecter le Code de la route, à maintenir le vélo
-      en bon état, à utiliser systématiquement l’antivol fourni, à ne pas prêter ou sous-louer le vélo, à ne pas le modifier
-      et à le restituer complet.
-    </p>
-    <p>
-      Le Bailleur s’engage à remettre un vélo conforme à la description, propre, entretenu et en état normal de
-      fonctionnement, sous réserve des réserves indiquées dans l’état des lieux.
-    </p>
-    <p>
-      Les pénalités, responsabilités, données personnelles, état des lieux, droit applicable et modalités de règlement des
-      litiges sont conformes au texte complet du contrat de location de vélo entre particuliers annexé.
-    </p>
-  </fieldset>
+      // pré-remplissage simple pour champs uniques
+      params.forEach((value, key) => {
+        if (key === 'extras' || key === 'terms') return;
+        const el = document.querySelector(`[name="${key}"]`);
+        if (el) el.value = decodeURIComponent(value);
+      });
 
-  <!-- 16. Signatures -->
-  <fieldset>
-    <legend>16. Signatures</legend>
-    <label>Lieu
-      <input type="text" name="lieu">
-    </label>
-    <label>Date
-      <input type="date" name="date_signature">
-    </label>
+      // pré-remplissage pour extras (checkboxes multiples)
+      const extras = params.get('extras');
+      if (extras) {
+        const list = extras.split(',').map(s => s.trim());
+        list.forEach(val => {
+          const cb = document.querySelector(`input[name="extras"][value="${val}"]`);
+          if (cb) cb.checked = true;
+        });
+      }
 
-    <div class="cols sign-block">
-      <div class="col">
-        <h3>Le Bailleur (propriétaire)</h3>
-        <label>Nom
-          <input type="text" name="bailleur_nom_signature">
-        </label>
-        <p>Mention manuscrite : « Lu et approuvé, bon pour accord »</p>
-<h3>Signature du bailleur</h3>
-<canvas id="signature-bailleur" width="300" height="150" style="border:1px solid #000;"></canvas>
-<button type="button" onclick="clearSignature('bailleur')">Effacer</button>
-<input type="hidden" name="signatureBailleur" id="signatureBailleur">
-<!-- Zone de signature (à remplacer par un canvas si tu veux une vraie signature dessinée) -->
-      </div>
-      <div class="col">
-        <h3>Le Locataire (utilisateur)</h3>
-        <label>Nom
-          <input type="text" name="locataire_nom_signature">
-        </label>
-        <p>Mention manuscrite : « Lu et approuvé, bon pour accord »</p>
-<h3>Signature du locataire</h3>
-<canvas id="signature-locataire" width="300" height="150" style="border:1px solid #000;"></canvas>
-<button type="button" onclick="clearSignature('locataire')">Effacer</button>
-<input type="hidden" name="signatureLocataire" id="signatureLocataire">
-      </div>
-    </div>
-  </fieldset>
+      // pré-remplissage pour case unique terms
+      const terms = params.get('terms');
+      if (terms === 'accepted') {
+        const t = document.querySelector('input[name="terms"][value="accepted"]');
+        if (t) t.checked = true;
+      }
+    })();
 
-  <button type="submit">Générer / enregistrer le contrat</button>
-  <button type="button" id="downloadPDF">Télécharger le contrat en PDF</button>
+    // Récupérer les données du formulaire (inclut extras comme tableau)
+    function getFormData() {
+      const form = document.getElementById('rentalForm');
+      const data = Object.fromEntries(new FormData(form).entries());
 
-</form>
-<script>
-const params = new URLSearchParams(window.location.search);
-params.forEach((value, key) => {
-  const field = document.querySelector(`[name="${key}"]`);
-  if (field) field.value = value;
-});
-</script>
-<script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.5/dist/signature_pad.umd.min.js"></script>
-<script>
-  const canvasBailleur = document.getElementById('signature-bailleur');
-  const canvasLocataire = document.getElementById('signature-locataire');
+      // extras est un tableau
+      const extras = Array.from(form.querySelectorAll('input[name="extras"]:checked'))
+                          .map(cb => cb.value);
+      data.extras = extras;
+      // terms (case unique)
+      const termsEl = form.querySelector('input[name="terms"]');
+      data.terms = termsEl && termsEl.checked ? termsEl.value : null;
 
-  const signaturePadBailleur = new SignaturePad(canvasBailleur);
-  const signaturePadLocataire = new SignaturePad(canvasLocataire);
+      return data;
+    }
 
-  function clearSignature(type) {
-    if (type === 'bailleur') signaturePadBailleur.clear();
-    if (type === 'locataire') signaturePadLocataire.clear();
-  }
+    // Sauvegarde locale
+    document.getElementById('saveBtn').addEventListener('click', () => {
+      const data = getFormData();
+      localStorage.setItem('expressVeloContract', JSON.stringify(data));
+      alert('Contrat enregistré localement');
+    });
 
-  document.getElementById('contrat-velo').addEventListener('submit', function(e) {
-    document.getElementById('signatureBailleur').value = signaturePadBailleur.toDataURL();
-    document.getElementById('signatureLocataire').value = signaturePadLocataire.toDataURL();
-  });
-</script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script>
-document.getElementById("downloadPDF").addEventListener("click", async () => {
-  const { jsPDF } = jspdf;
-
-  // On capture uniquement le formulaire (pas toute la page)
-  const element = document.getElementById("contrat-velo");
-
-  // Convertir en image
-  const canvas = await html2canvas(element, { scale: 2 });
-  const imgData = canvas.toDataURL("image/png");
-
-  // Création PDF A4
-  const pdf = new jsPDF("p", "mm", "a4");
-  const pdfWidth = pdf.internal.pageSize.getWidth();
-  const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-
-  // Si le contenu dépasse une page, on découpe automatiquement
-  let position = 0;
-  let heightLeft = pdfHeight;
-
-  pdf.addImage(imgData, "PNG", 0, position, pdfWidth, pdfHeight);
-  heightLeft -= pdf.internal.pageSize.getHeight();
-
-  while (heightLeft > 0) {
-    pdf.addPage();
-    position = -pdf.internal.pageSize.getHeight();
-    pdf.addImage(imgData, "PNG", 0, position, pdfWidth, pdfHeight);
-    heightLeft -= pdf.internal.pageSize.getHeight();
-  }
-
-  // Télécharger
-  pdf.save("contrat-velo-signe.pdf");
-});
-</script>
+    // Placeholder téléchargement PDF
+    document.getElementById('downloadBtn').addEventListener('click', () => {
+      alert('Téléchargement PDF non activé dans cette version. Je peux t’aider à l’ajouter.');
+    });
+  </script>
 
 </body>
 </html>
