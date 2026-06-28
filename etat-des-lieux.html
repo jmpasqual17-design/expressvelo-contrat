@@ -1,8 +1,6 @@
-
 <!doctype html>
 <html lang="fr">
 <head>
-
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>État des lieux - ExpressVélo</title>
@@ -13,6 +11,8 @@
       --bg:#F3F4F6;
       --text:#374151;
       --muted:#6B7280;
+      --success:#0d7a3e;
+      --error:#b13030;
     }
     html,body{height:100%;margin:0}
     body{
@@ -38,29 +38,91 @@
 
     form .row{ display:flex; gap:12px; flex-wrap:wrap; }
     label{ display:block; font-weight:600; margin-top:12px; font-size:14px; }
-    input[type="text"], textarea, select {
+    input[type="text"], input[type="email"], textarea, select {
       width:100%; padding:10px 12px; margin-top:6px;
       border:1px solid #E5E7EB; border-radius:8px; font-size:15px;
       background:#fff; color:var(--text);
+      box-sizing:border-box;
+    }
+    input:focus, textarea:focus, select:focus {
+      outline:2px solid var(--blue-dark);
+      outline-offset:1px;
     }
     textarea{ min-height:100px; resize:vertical; }
 
     .accessory {
-      display:flex; align-items:center; gap:12px; margin-top:10px;
+      display:flex; align-items:center; gap:12px; margin-top:10px; flex-wrap:wrap;
     }
     .state-select { min-width:150px; padding:8px 10px; border-radius:8px; border:1px solid #E5E7EB; }
+    .checkbox { display:flex; align-items:center; gap:8px; cursor:pointer; }
     .checkbox input[type="checkbox"]{ width:18px; height:18px; accent-color:var(--blue-dark); }
 
     .photos { display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
-    .photo-placeholder { width:120px; height:80px; border:1px dashed #E5E7EB; border-radius:8px; display:flex; align-items:center; justify-content:center; color:var(--muted); font-size:13px; }
+    .photo-preview { 
+      width:140px; height:90px; object-fit:cover; 
+      border-radius:6px; border:1px solid #E5E7EB;
+    }
 
-    .actions{ margin-top:18px; display:flex; gap:12px; align-items:center; }
-    .button{ background:var(--blue-dark); color:#fff; padding:12px 16px; border-radius:10px; border:none; cursor:pointer; font-weight:700; }
-    .button.secondary{ background:#fff; color:var(--blue-dark); border:1px solid #E5E7EB; }
+    .actions{ margin-top:18px; display:flex; gap:12px; flex-wrap:wrap; }
+    .button{ 
+      background:var(--blue-dark); color:#fff; 
+      padding:12px 24px; border-radius:10px; 
+      border:none; cursor:pointer; font-weight:700; 
+      font-size:15px; transition:all 0.2s;
+    }
+    .button:hover{ transform:scale(1.02); opacity:0.9; }
+    .button:disabled{ opacity:0.6; cursor:not-allowed; transform:none; }
+    .button.success{ background:var(--success); }
+    .button.secondary{ 
+      background:#fff; color:var(--blue-dark); 
+      border:1px solid #E5E7EB; 
+    }
+    .button.secondary:hover{ background:#f5f7fa; }
+
+    .toast {
+      visibility: hidden;
+      min-width: 300px;
+      background: #0b2a48;
+      color: #fff;
+      text-align: center;
+      border-radius: 50px;
+      padding: 16px 24px;
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1000;
+      font-weight: 500;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+      opacity: 0;
+      transition: visibility 0.3s, opacity 0.3s;
+    }
+    .toast.show { visibility: visible; opacity: 1; }
+    .toast.success { background: var(--success); }
+    .toast.error { background: var(--error); }
+
+    .spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,0.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 0.8s ease-in-out infinite;
+      vertical-align: middle;
+      margin-right: 8px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
     .note{ margin-top:12px; color:var(--muted); font-size:13px; }
 
-    @media (max-width:520px){ .row{ flex-direction:column } .accessory{ flex-direction:column; align-items:flex-start } }
+    @media (max-width:520px){ 
+      .row{ flex-direction:column } 
+      .accessory{ flex-direction:column; align-items:flex-start; width:100%; }
+      .accessory select, .accessory input { width:100%; }
+      .actions{ flex-direction:column; }
+      .button{ width:100%; justify-content:center; }
+    }
   </style>
 </head>
 <body>
@@ -72,24 +134,27 @@
     </header>
 
     <form id="etatForm">
+      <!-- Propriétaire -->
       <label for="ownerName">Propriétaire</label>
-      <input type="text" id="ownerName" name="ownerName" placeholder="Nom du propriétaire">
+      <input type="text" id="ownerName" name="ownerName" placeholder="Nom du propriétaire" required>
       <label for="ownerEmail">Email du propriétaire</label>
-      <input id="ownerEmail" name="ownerEmail" type="email" placeholder="proprietaire@exemple.com">
+      <input id="ownerEmail" name="ownerEmail" type="email" placeholder="proprietaire@exemple.com" required>
 
+      <!-- Locataire -->
       <label for="renterName">Locataire</label>
-      <input type="text" id="renterName" name="renterName" placeholder="Nom du locataire">
+      <input type="text" id="renterName" name="renterName" placeholder="Nom du locataire" required>
       <label for="renterEmail">Email du locataire</label>
-      <input id="renterEmail" name="renterEmail" type="email" placeholder="locataire@exemple.com">
+      <input id="renterEmail" name="renterEmail" type="email" placeholder="locataire@exemple.com" required>
       
+      <!-- Dates et vélo -->
       <div class="row">
         <div style="flex:1; min-width:180px;">
           <label for="startDate">Date de début</label>
-          <input type="text" id="startDate" name="startDate" placeholder="YYYY-MM-DD">
+          <input type="date" id="startDate" name="startDate">
         </div>
         <div style="flex:1; min-width:180px;">
           <label for="endDate">Date de fin</label>
-          <input type="text" id="endDate" name="endDate" placeholder="YYYY-MM-DD">
+          <input type="date" id="endDate" name="endDate">
         </div>
         <div style="flex:1; min-width:180px;">
           <label for="bikeModel">Modèle de vélo</label>
@@ -97,11 +162,11 @@
         </div>
       </div>
 
+      <!-- Accessoires -->
       <label style="margin-top:18px;">Accessoires et état</label>
 
-      <!-- Exemple d'accessoire avec checkbox + select état + commentaire -->
       <div class="accessory">
-        <label class="checkbox" style="display:flex;align-items:center;gap:8px;">
+        <label class="checkbox">
           <input type="checkbox" name="extras" value="helmet">
           <span class="checkbox-label">Casque</span>
         </label>
@@ -160,246 +225,332 @@
         <input type="text" name="note_basket" placeholder="Remarque (optionnel)" style="flex:1; min-width:160px;">
       </div>
 
+      <!-- Observations -->
       <label for="generalNotes">Observations générales</label>
       <textarea id="generalNotes" name="generalNotes" placeholder="État général du vélo, kilométrage, etc."></textarea>
 
-      <!-- Photos placeholder (optionnel) -->
-      <label>Photos (optionnel)</label>
+      <!-- Photos -->
+      <label for="photos">Photos (optionnel)</label>
+      <input id="photos" name="photos" type="file" accept="image/*" multiple>
+      <div id="photosPreview" class="photos" aria-live="polite"></div>
 
-      <!-- Photos input et aperçu -->
-  <label for="photos">Photos (au départ)</label>
-  <input id="photos" name="photos" type="file" accept="image/*" multiple>
-  <div id="photosPreview" class="photos" aria-live="polite"></div>
-
-  <!-- Boutons : générer PDF et envoyer -->
-  <div class="actions">
-    <button type="button" class="button" id="generateSendBtn">Générer et envoyer (PDF)</button>
-    <button type="button" class="button secondary" id="saveEtat">Enregistrer localement</button>
-  </div>
-</form>
-
-      <div class="note">Tu peux pré‑remplir cette page via l’URL (voir instructions ci‑dessous).</div>
+      <!-- Boutons -->
+      <div class="actions">
+        <button type="button" class="button" id="generateSendBtn">✉️ Générer et envoyer (PDF)</button>
+        <button type="button" class="button secondary" id="saveEtat">💾 Enregistrer localement</button>
+        <button type="button" class="button secondary" id="downloadEtat">⬇️ Télécharger PDF</button>
+      </div>
     </form>
+
+    <div class="note">Tu peux pré‑remplir cette page via l’URL (voir instructions ci‑dessous).</div>
   </div>
+
+  <!-- Toast notification -->
+  <div id="toast" class="toast"></div>
+
+  <!-- ============================================================ -->
+  <!-- BIBLIOTHÈQUES EXTERNES                                       -->
+  <!-- ============================================================ -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
   <script>
-    // Pré-remplissage depuis l'URL (ownerName, renterName, startDate, endDate, bikeModel, extras, state_xxx, note_xxx)
-    (function(){
-      const params = new URLSearchParams(window.location.search);
+    (function() {
+      console.log('🚀 Application démarrée');
 
-      params.forEach((value, key) => {
-        // ignore extras handled separately
-        if (key === 'extras') return;
-        const el = document.querySelector(`[name="${key}"]`);
-        if (el) el.value = decodeURIComponent(value);
+      // ==========================================================
+      // 1. TOAST NOTIFICATION
+      // ==========================================================
+      function showToast(message, type = 'info') {
+        const toast = document.getElementById('toast');
+        if (!toast) {
+          alert(message);
+          return;
+        }
+        toast.textContent = message;
+        toast.className = 'toast';
+        if (type === 'success') toast.classList.add('success');
+        if (type === 'error') toast.classList.add('error');
+        toast.classList.add('show');
+        clearTimeout(toast._timeout);
+        toast._timeout = setTimeout(() => {
+          toast.classList.remove('show');
+        }, 5000);
+      }
+
+      // ==========================================================
+      // 2. PRÉ-REMPLISSAGE DEPUIS L'URL
+      // ==========================================================
+      (function(){
+        const params = new URLSearchParams(window.location.search);
+        params.forEach((value, key) => {
+          if (key === 'extras') return;
+          const el = document.querySelector(`[name="${key}"]`);
+          if (el) el.value = decodeURIComponent(value);
+        });
+
+        const extras = params.get('extras');
+        if (extras) {
+          extras.split(',').map(s => s.trim()).forEach(val => {
+            const cb = document.querySelector(`input[name="extras"][value="${val}"]`);
+            if (cb) cb.checked = true;
+          });
+        }
+
+        for (const [k,v] of params.entries()) {
+          if (k.startsWith('state_') || k.startsWith('note_')) {
+            const el = document.querySelector(`[name="${k}"]`);
+            if (el) el.value = decodeURIComponent(v);
+          }
+        }
+      })();
+
+      // ==========================================================
+      // 3. GESTION DES PHOTOS
+      // ==========================================================
+      const photosInput = document.getElementById('photos');
+      const photosPreview = document.getElementById('photosPreview');
+      let photosDataUrls = [];
+
+      photosInput.addEventListener('change', async (e) => {
+        photosPreview.innerHTML = '';
+        photosDataUrls = [];
+        const files = Array.from(e.target.files).slice(0, 6);
+        
+        for (const file of files) {
+          if (!file.type.startsWith('image/')) continue;
+          try {
+            // Compresser l'image pour réduire la taille
+            const compressed = await compressImage(file);
+            photosDataUrls.push(compressed);
+            
+            const img = document.createElement('img');
+            img.src = compressed;
+            img.className = 'photo-preview';
+            photosPreview.appendChild(img);
+          } catch (err) {
+            console.error('Erreur compression:', err);
+          }
+        }
       });
 
-      // extras (cocher)
-      const extras = params.get('extras');
-      if (extras) {
-        extras.split(',').map(s => s.trim()).forEach(val => {
-          const cb = document.querySelector(`input[name="extras"][value="${val}"]`);
-          if (cb) cb.checked = true;
+      // Fonction pour compresser les images
+      function compressImage(file) {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            const img = new Image();
+            img.onload = () => {
+              const canvas = document.createElement('canvas');
+              const maxWidth = 800;
+              const maxHeight = 600;
+              let width = img.width;
+              let height = img.height;
+              
+              if (width > maxWidth) {
+                height = (height * maxWidth) / width;
+                width = maxWidth;
+              }
+              if (height > maxHeight) {
+                width = (width * maxHeight) / height;
+                height = maxHeight;
+              }
+              
+              canvas.width = width;
+              canvas.height = height;
+              const ctx = canvas.getContext('2d');
+              ctx.drawImage(img, 0, 0, width, height);
+              resolve(canvas.toDataURL('image/jpeg', 0.7));
+            };
+            img.onerror = reject;
+            img.src = e.target.result;
+          };
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
         });
       }
 
-      // états et notes (state_helmet=bon, note_helmet=...)
-      for (const [k,v] of params.entries()) {
-        if (k.startsWith('state_') || k.startsWith('note_')) {
-          const el = document.querySelector(`[name="${k}"]`);
-          if (el) el.value = decodeURIComponent(v);
+      // ==========================================================
+      // 4. RÉCUPÉRATION DES DONNÉES
+      // ==========================================================
+      function getEtatData() {
+        const form = document.getElementById('etatForm');
+        const data = Object.fromEntries(new FormData(form).entries());
+        
+        // Extras
+        const extras = Array.from(form.querySelectorAll('input[name="extras"]:checked')).map(cb => cb.value);
+        data.extras = extras;
+        
+        // États et notes
+        const states = {};
+        extras.forEach(val => {
+          const sel = form.querySelector(`[name="state_${val}"]`);
+          const note = form.querySelector(`[name="note_${val}"]`);
+          states[val] = { 
+            state: sel ? sel.value || null : null, 
+            note: note ? note.value || null : null 
+          };
+        });
+        data.extras_states = states;
+        data.photos = photosDataUrls;
+        
+        return data;
+      }
+
+      // ==========================================================
+      // 5. GÉNÉRATION DU PDF
+      // ==========================================================
+      async function generatePdf(containerEl, photos = []) {
+        try {
+          const { jsPDF } = window.jspdf;
+          
+          // Capturer le conteneur
+          const canvas = await html2canvas(containerEl, { 
+            scale: 2, 
+            useCORS: true,
+            backgroundColor: '#ffffff',
+            logging: false
+          });
+          
+          const imgData = canvas.toDataURL('image/jpeg', 0.95);
+          const doc = new jsPDF({ unit: 'pt', format: 'a4' });
+          const pageWidth = doc.internal.pageSize.getWidth();
+          const margin = 20;
+          const usableWidth = pageWidth - margin * 2;
+          
+          // Page principale
+          const imgProps = doc.getImageProperties(imgData);
+          const imgRatio = imgProps.width / imgProps.height;
+          const imgHeight = usableWidth / imgRatio;
+          doc.addImage(imgData, 'JPEG', margin, margin, usableWidth, imgHeight);
+
+          // Pages photos
+          for (const dataUrl of photos.slice(0, 6)) {
+            doc.addPage();
+            const pImgProps = doc.getImageProperties(dataUrl);
+            const pRatio = pImgProps.width / pImgProps.height;
+            const pHeight = usableWidth / pRatio;
+            doc.addImage(dataUrl, 'JPEG', margin, margin, usableWidth, pHeight);
+          }
+
+          return doc.output('datauristring');
+        } catch (error) {
+          console.error('Erreur génération PDF:', error);
+          throw error;
         }
       }
-    })();
 
-    // Récupérer les données structurées
-    function getEtatData() {
-      const form = document.getElementById('etatForm');
-      const data = Object.fromEntries(new FormData(form).entries());
+      // ==========================================================
+      // 6. ENVOI PAR EMAIL (VERSION SIMPLIFIÉE - TÉLÉCHARGEMENT + GMAIL)
+      // ==========================================================
+      function sendByEmail(pdfDataUrl, donnees) {
+        // Télécharger le PDF
+        const link = document.createElement('a');
+        link.href = pdfDataUrl;
+        link.download = `etat-lieux-${donnees.renterName || 'locataire'}.pdf`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
 
-      // extras array
-      const extras = Array.from(form.querySelectorAll('input[name="extras"]:checked')).map(cb => cb.value);
-      data.extras = extras;
+        // Ouvrir Gmail
+        const sujet = encodeURIComponent(`État des lieux - ${donnees.ownerName || 'Propriétaire'} & ${donnees.renterName || 'Locataire'}`);
+        const corps = encodeURIComponent(
+          `Bonjour,\n\n` +
+          `Voici l'état des lieux pour la location du vélo.\n\n` +
+          `📋 Détails :\n` +
+          `- Propriétaire : ${donnees.ownerName || 'Non spécifié'} (${donnees.ownerEmail || ''})\n` +
+          `- Locataire : ${donnees.renterName || 'Non spécifié'} (${donnees.renterEmail || ''})\n` +
+          `- Vélo : ${donnees.bikeModel || 'Non spécifié'}\n` +
+          `- Début : ${donnees.startDate || 'Non spécifié'}\n` +
+          `- Fin : ${donnees.endDate || 'Non spécifié'}\n\n` +
+          `📎 Veuillez trouver le document en pièce jointe.\n\n` +
+          `Cordialement.`
+        );
 
-      // états par accessoire
-      const states = {};
-      extras.forEach(val => {
-        const sel = form.querySelector(`[name="state_${val}"]`);
-        const note = form.querySelector(`[name="note_${val}"]`);
-        states[val] = {
-          state: sel ? sel.value || null : null,
-          note: note ? note.value || null : null
-        };
+        const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${donnees.ownerEmail},${donnees.renterEmail}&su=${sujet}&body=${corps}`;
+        window.open(gmailUrl, '_blank');
+
+        showToast('✅ PDF téléchargé. Gmail ouvert !', 'success');
+      }
+
+      // ==========================================================
+      // 7. BOUTON "GÉNÉRER ET ENVOYER"
+      // ==========================================================
+      document.getElementById('generateSendBtn').addEventListener('click', async function() {
+        console.log('🖱️ Clic sur "Générer et envoyer"');
+        
+        this.disabled = true;
+        const originalText = this.innerHTML;
+        this.innerHTML = '<span class="spinner"></span> Génération en cours...';
+
+        try {
+          const data = getEtatData();
+          
+          // Vérifier les emails
+          if (!data.ownerEmail || !data.renterEmail) {
+            showToast('❌ Les emails du propriétaire et du locataire sont obligatoires', 'error');
+            this.disabled = false;
+            this.innerHTML = originalText;
+            return;
+          }
+
+          showToast('📄 Génération du PDF...', 'info');
+          const container = document.getElementById('contractContainer');
+          const pdfDataUrl = await generatePdf(container, data.photos || []);
+
+          showToast('✉️ Préparation de l\'envoi...', 'info');
+          sendByEmail(pdfDataUrl, data);
+
+        } catch (error) {
+          console.error('❌ Erreur:', error);
+          showToast('❌ ' + error.message, 'error');
+        } finally {
+          this.disabled = false;
+          this.innerHTML = '✉️ Générer et envoyer (PDF)';
+        }
       });
-      data.extras_states = states;
-      return data;
-    }
 
-    document.getElementById('saveEtat').addEventListener('click', () => {
-      const data = getEtatData();
-      // sauvegarde locale
-      localStorage.setItem('expressVeloEtat', JSON.stringify(data));
-      alert('État des lieux enregistré localement');
-    });
+      // ==========================================================
+      // 8. BOUTON "TÉLÉCHARGER PDF"
+      // ==========================================================
+      document.getElementById('downloadEtat').addEventListener('click', async function() {
+        console.log('🖱️ Clic sur "Télécharger PDF"');
+        
+        try {
+          this.disabled = true;
+          this.textContent = '⏳ Génération...';
+          
+          const data = getEtatData();
+          const container = document.getElementById('contractContainer');
+          const pdfDataUrl = await generatePdf(container, data.photos || []);
+          
+          const link = document.createElement('a');
+          link.href = pdfDataUrl;
+          link.download = `etat-lieux-${data.renterName || 'location'}.pdf`;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          
+          showToast('✅ PDF téléchargé avec succès !', 'success');
+        } catch (error) {
+          console.error('❌ Erreur:', error);
+          showToast('❌ Erreur lors du téléchargement', 'error');
+        } finally {
+          this.disabled = false;
+          this.textContent = '⬇️ Télécharger PDF';
+        }
+      });
 
-    document.getElementById('downloadEtat').addEventListener('click', () => {
-      alert('Téléchargement PDF non activé ici. Je peux t’aider à ajouter la génération PDF.');
-    });
+      // ==========================================================
+      // 9. BOUTON "ENREGISTRER LOCALEMENT"
+      // ==========================================================
+      document.getElementById('saveEtat').addEventListener('click', function() {
+        const data = getEtatData();
+        localStorage.setItem('expressVeloEtat', JSON.stringify(data));
+        showToast('✅ État des lieux enregistré localement', 'success');
+      });
+
+    })();
   </script>
-  <script>
-  // Variables de config : remplacer par ton endpoint serverless
-  const SEND_ENDPOINT = 'https://mon-site-netlify.netlify.app/.netlify/functions/sendPdf'; // ou l'URL complète de ta fonction
-  const SERVER_TOKEN = 'REPLACE_WITH_YOUR_TOKEN'; // token simple pour protéger l'endpoint
-
-  // Gestion des uploads et aperçu
-  const photosInput = document.getElementById('photos');
-  const photosPreview = document.getElementById('photosPreview');
-  let photosDataUrls = []; // tableau de dataURL
-
-  photosInput.addEventListener('change', async (e) => {
-    photosPreview.innerHTML = '';
-    photosDataUrls = [];
-    const files = Array.from(e.target.files).slice(0, 8); // limite raisonnable
-    for (const file of files) {
-      if (!file.type.startsWith('image/')) continue;
-      const reader = new FileReader();
-      reader.onload = () => {
-        const dataUrl = reader.result;
-        photosDataUrls.push(dataUrl);
-        const img = document.createElement('img');
-        img.src = dataUrl;
-        img.style.width = '140px';
-        img.style.height = '90px';
-        img.style.objectFit = 'cover';
-        img.style.borderRadius = '6px';
-        img.style.border = '1px solid #E5E7EB';
-        img.style.marginRight = '8px';
-        photosPreview.appendChild(img);
-      };
-      reader.readAsDataURL(file);
-    }
-  });
-
-  // Récupérer les données du formulaire (inclut extras, états, notes)
-  function getEtatData() {
-    const form = document.getElementById('etatForm');
-    const data = Object.fromEntries(new FormData(form).entries());
-    const extras = Array.from(form.querySelectorAll('input[name="extras"]:checked')).map(cb => cb.value);
-    data.extras = extras;
-    // états et notes
-    const states = {};
-    extras.forEach(val => {
-      const sel = form.querySelector(`[name="state_${val}"]`);
-      const note = form.querySelector(`[name="note_${val}"]`);
-      states[val] = { state: sel ? sel.value || null : null, note: note ? note.value || null : null };
-    });
-    data.extras_states = states;
-    data.photos = photosDataUrls; // data URLs
-    return data;
-  }
-
-  // Générer PDF (capture du conteneur + photos en pages supplémentaires)
-  async function generatePdfBlob(containerEl, photos = []) {
-    // capture du conteneur en image
-    const canvas = await html2canvas(containerEl, { scale: 2, useCORS: true });
-    const imgData = canvas.toDataURL('image/png');
-
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF({ unit: 'pt', format: 'a4' });
-    const pageWidth = doc.internal.pageSize.getWidth();
-    const margin = 20;
-    const usableWidth = pageWidth - margin * 2;
-    // ajouter la page principale
-    const imgProps = doc.getImageProperties(imgData);
-    const imgRatio = imgProps.width / imgProps.height;
-    const imgHeight = usableWidth / imgRatio;
-    doc.addImage(imgData, 'PNG', margin, margin, usableWidth, imgHeight);
-
-    // ajouter chaque photo sur une nouvelle page (max 8)
-    for (const dataUrl of photos.slice(0, 8)) {
-      doc.addPage();
-      const pImgProps = doc.getImageProperties(dataUrl);
-      const pRatio = pImgProps.width / pImgProps.height;
-      const pHeight = usableWidth / pRatio;
-      doc.addImage(dataUrl, 'PNG', margin, margin, usableWidth, pHeight);
-    }
-
-    // sortie en blob
-    const pdfBlob = doc.output('blob');
-    return pdfBlob;
-  }
-
-  // Convertir Blob en base64
-  function blobToBase64(blob) {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result.split(',')[1]);
-      reader.onerror = reject;
-      reader.readAsDataURL(blob);
-    });
-  }
-
-  // Envoi au serverless
-  async function sendPdfToServer(pdfBase64, renterEmail, ownerEmail, bookingId = null) {
-    const payload = {
-      pdf: pdfBase64,
-      renterEmail,
-      ownerEmail,
-      bookingId
-    };
-    const res = await fetch(SEND_ENDPOINT, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': SERVER_TOKEN
-      },
-      body: JSON.stringify(payload)
-    });
-    if (!res.ok) {
-      const text = await res.text();
-      throw new Error(text || 'Erreur serveur');
-    }
-    return res.json();
-  }
-
-  // Handler du bouton
-  document.getElementById('generateSendBtn').addEventListener('click', async () => {
-    try {
-      const container = document.getElementById('contractContainer'); // ou l'ID du conteneur à capturer
-      const data = getEtatData();
-      // récupérer emails depuis le formulaire (ajoute ces champs si nécessaire)
-      const renterEmail = data.renterEmail || prompt('Email du locataire (renterEmail) :') || '';
-      const ownerEmail = data.ownerEmail || prompt('Email du propriétaire (ownerEmail) :') || '';
-      if (!renterEmail || !ownerEmail) return alert('Emails manquants.');
-
-      // générer PDF
-      const pdfBlob = await generatePdfBlob(container, data.photos || []);
-      const pdfBase64 = await blobToBase64(pdfBlob);
-
-      // envoyer au serveur
-      document.getElementById('generateSendBtn').disabled = true;
-      document.getElementById('generateSendBtn').textContent = 'Envoi en cours...';
-
-      await sendPdfToServer(pdfBase64, renterEmail, ownerEmail, data.bookingId || null);
-
-      alert('PDF envoyé au locataire et au propriétaire.');
-    } catch (err) {
-      console.error(err);
-      alert('Erreur : ' + (err.message || err));
-    } finally {
-      document.getElementById('generateSendBtn').disabled = false;
-      document.getElementById('generateSendBtn').textContent = 'Générer et envoyer (PDF)';
-    }
-  });
-
-  // sauvegarde locale existante
-  document.getElementById('saveEtat').addEventListener('click', () => {
-    const data = getEtatData();
-    localStorage.setItem('expressVeloEtat', JSON.stringify(data));
-    alert('État des lieux enregistré localement');
-  });
-</script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </body>
 </html>
