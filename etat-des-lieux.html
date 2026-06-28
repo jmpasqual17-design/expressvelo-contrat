@@ -4,3 +4,244 @@ code etat-des-lieux.html   # ou nano etat-des-lieux.html
 git add etat-des-lieux.html
 git commit -m "Ajout page état des lieux"
 git push
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>État des lieux - ExpressVélo</title>
+
+  <style>
+    :root{
+      --blue-dark:#1E3A8A;
+      --bg:#F3F4F6;
+      --text:#374151;
+      --muted:#6B7280;
+    }
+    html,body{height:100%;margin:0}
+    body{
+      font-family:Inter, Arial, sans-serif;
+      background:var(--bg);
+      display:flex;
+      align-items:flex-start;
+      justify-content:center;
+      padding:28px;
+      color:var(--text);
+    }
+    .container{
+      width:100%;
+      max-width:820px;
+      background:#fff;
+      padding:26px;
+      border-radius:12px;
+      box-shadow:0 8px 30px rgba(16,24,40,0.06);
+    }
+    header{ text-align:center; margin-bottom:12px; }
+    header h1{ margin:0; color:var(--blue-dark); font-size:20px; }
+    .meta{ color:var(--muted); font-size:13px; margin-top:6px; text-align:center; }
+
+    form .row{ display:flex; gap:12px; flex-wrap:wrap; }
+    label{ display:block; font-weight:600; margin-top:12px; font-size:14px; }
+    input[type="text"], textarea, select {
+      width:100%; padding:10px 12px; margin-top:6px;
+      border:1px solid #E5E7EB; border-radius:8px; font-size:15px;
+      background:#fff; color:var(--text);
+    }
+    textarea{ min-height:100px; resize:vertical; }
+
+    .accessory {
+      display:flex; align-items:center; gap:12px; margin-top:10px;
+    }
+    .state-select { min-width:150px; padding:8px 10px; border-radius:8px; border:1px solid #E5E7EB; }
+    .checkbox input[type="checkbox"]{ width:18px; height:18px; accent-color:var(--blue-dark); }
+
+    .photos { display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
+    .photo-placeholder { width:120px; height:80px; border:1px dashed #E5E7EB; border-radius:8px; display:flex; align-items:center; justify-content:center; color:var(--muted); font-size:13px; }
+
+    .actions{ margin-top:18px; display:flex; gap:12px; align-items:center; }
+    .button{ background:var(--blue-dark); color:#fff; padding:12px 16px; border-radius:10px; border:none; cursor:pointer; font-weight:700; }
+    .button.secondary{ background:#fff; color:var(--blue-dark); border:1px solid #E5E7EB; }
+
+    .note{ margin-top:12px; color:var(--muted); font-size:13px; }
+
+    @media (max-width:520px){ .row{ flex-direction:column } .accessory{ flex-direction:column; align-items:flex-start } }
+  </style>
+</head>
+<body>
+  <div class="container" id="contractContainer">
+    <header>
+      <h1>État des lieux - ExpressVélo</h1>
+      <div class="meta">Pré‑rempli depuis le lien de réservation</div>
+    </header>
+
+    <form id="etatForm">
+      <label for="ownerName">Propriétaire</label>
+      <input type="text" id="ownerName" name="ownerName" placeholder="Nom du propriétaire">
+
+      <label for="renterName">Locataire</label>
+      <input type="text" id="renterName" name="renterName" placeholder="Nom du locataire">
+
+      <div class="row">
+        <div style="flex:1; min-width:180px;">
+          <label for="startDate">Date de début</label>
+          <input type="text" id="startDate" name="startDate" placeholder="YYYY-MM-DD">
+        </div>
+        <div style="flex:1; min-width:180px;">
+          <label for="endDate">Date de fin</label>
+          <input type="text" id="endDate" name="endDate" placeholder="YYYY-MM-DD">
+        </div>
+        <div style="flex:1; min-width:180px;">
+          <label for="bikeModel">Modèle de vélo</label>
+          <input type="text" id="bikeModel" name="bikeModel" placeholder="Modèle">
+        </div>
+      </div>
+
+      <label style="margin-top:18px;">Accessoires et état</label>
+
+      <!-- Exemple d'accessoire avec checkbox + select état + commentaire -->
+      <div class="accessory">
+        <label class="checkbox" style="display:flex;align-items:center;gap:8px;">
+          <input type="checkbox" name="extras" value="helmet">
+          <span class="checkbox-label">Casque</span>
+        </label>
+        <select name="state_helmet" class="state-select" aria-label="État Casque">
+          <option value="">État</option>
+          <option value="bon">Bon</option>
+          <option value="rayé">Rayé</option>
+          <option value="choc">Choc</option>
+          <option value="manquant">Manquant</option>
+        </select>
+        <input type="text" name="note_helmet" placeholder="Remarque (optionnel)" style="flex:1; min-width:160px;">
+      </div>
+
+      <div class="accessory">
+        <label class="checkbox">
+          <input type="checkbox" name="extras" value="lock">
+          <span class="checkbox-label">Antivol</span>
+        </label>
+        <select name="state_lock" class="state-select" aria-label="État Antivol">
+          <option value="">État</option>
+          <option value="bon">Bon</option>
+          <option value="rayé">Rayé</option>
+          <option value="choc">Choc</option>
+          <option value="manquant">Manquant</option>
+        </select>
+        <input type="text" name="note_lock" placeholder="Remarque (optionnel)" style="flex:1; min-width:160px;">
+      </div>
+
+      <div class="accessory">
+        <label class="checkbox">
+          <input type="checkbox" name="extras" value="lights">
+          <span class="checkbox-label">Éclairage</span>
+        </label>
+        <select name="state_lights" class="state-select" aria-label="État Éclairage">
+          <option value="">État</option>
+          <option value="bon">Bon</option>
+          <option value="rayé">Rayé</option>
+          <option value="choc">Choc</option>
+          <option value="manquant">Manquant</option>
+        </select>
+        <input type="text" name="note_lights" placeholder="Remarque (optionnel)" style="flex:1; min-width:160px;">
+      </div>
+
+      <div class="accessory">
+        <label class="checkbox">
+          <input type="checkbox" name="extras" value="basket">
+          <span class="checkbox-label">Panier</span>
+        </label>
+        <select name="state_basket" class="state-select" aria-label="État Panier">
+          <option value="">État</option>
+          <option value="bon">Bon</option>
+          <option value="rayé">Rayé</option>
+          <option value="choc">Choc</option>
+          <option value="manquant">Manquant</option>
+        </select>
+        <input type="text" name="note_basket" placeholder="Remarque (optionnel)" style="flex:1; min-width:160px;">
+      </div>
+
+      <label for="generalNotes">Observations générales</label>
+      <textarea id="generalNotes" name="generalNotes" placeholder="État général du vélo, kilométrage, etc."></textarea>
+
+      <!-- Photos placeholder (optionnel) -->
+      <label>Photos (optionnel)</label>
+      <div class="photos">
+        <div class="photo-placeholder">Photo 1</div>
+        <div class="photo-placeholder">Photo 2</div>
+        <div class="photo-placeholder">Photo 3</div>
+      </div>
+
+      <div class="actions">
+        <button type="button" class="button" id="saveEtat">Enregistrer l'état</button>
+        <button type="button" class="button secondary" id="downloadEtat">Télécharger PDF</button>
+      </div>
+
+      <div class="note">Tu peux pré‑remplir cette page via l’URL (voir instructions ci‑dessous).</div>
+    </form>
+  </div>
+
+  <script>
+    // Pré-remplissage depuis l'URL (ownerName, renterName, startDate, endDate, bikeModel, extras, state_xxx, note_xxx)
+    (function(){
+      const params = new URLSearchParams(window.location.search);
+
+      params.forEach((value, key) => {
+        // ignore extras handled separately
+        if (key === 'extras') return;
+        const el = document.querySelector(`[name="${key}"]`);
+        if (el) el.value = decodeURIComponent(value);
+      });
+
+      // extras (cocher)
+      const extras = params.get('extras');
+      if (extras) {
+        extras.split(',').map(s => s.trim()).forEach(val => {
+          const cb = document.querySelector(`input[name="extras"][value="${val}"]`);
+          if (cb) cb.checked = true;
+        });
+      }
+
+      // états et notes (state_helmet=bon, note_helmet=...)
+      for (const [k,v] of params.entries()) {
+        if (k.startsWith('state_') || k.startsWith('note_')) {
+          const el = document.querySelector(`[name="${k}"]`);
+          if (el) el.value = decodeURIComponent(v);
+        }
+      }
+    })();
+
+    // Récupérer les données structurées
+    function getEtatData() {
+      const form = document.getElementById('etatForm');
+      const data = Object.fromEntries(new FormData(form).entries());
+
+      // extras array
+      const extras = Array.from(form.querySelectorAll('input[name="extras"]:checked')).map(cb => cb.value);
+      data.extras = extras;
+
+      // états par accessoire
+      const states = {};
+      extras.forEach(val => {
+        const sel = form.querySelector(`[name="state_${val}"]`);
+        const note = form.querySelector(`[name="note_${val}"]`);
+        states[val] = {
+          state: sel ? sel.value || null : null,
+          note: note ? note.value || null : null
+        };
+      });
+      data.extras_states = states;
+      return data;
+    }
+
+    document.getElementById('saveEtat').addEventListener('click', () => {
+      const data = getEtatData();
+      // sauvegarde locale
+      localStorage.setItem('expressVeloEtat', JSON.stringify(data));
+      alert('État des lieux enregistré localement');
+    });
+
+    document.getElementById('downloadEtat').addEventListener('click', () => {
+      alert('Téléchargement PDF non activé ici. Je peux t’aider à ajouter la génération PDF.');
+    });
+  </script>
+</body>
+</html>
