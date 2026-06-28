@@ -602,9 +602,9 @@
     // Inscrivez-vous sur https://www.emailjs.com/
     // Créez un service et un template, puis remplacez les valeurs ci-dessous :
     const EMAILJS_CONFIG = {
-      PUBLIC_KEY: 'VOTRE_CLE_PUBLIQUE',     // Remplacer par votre clé publique
-      SERVICE_ID: 'VOTRE_SERVICE_ID',       // Remplacer par votre service ID
-      TEMPLATE_ID: 'VOTRE_TEMPLATE_ID'      // Remplacer par votre template ID
+      PUBLIC_KEY: 'zz4KdlO2Xyw0Y5Gej',     // Remplacer par votre clé publique
+      SERVICE_ID: 'service_g1ip1lt',       // Remplacer par votre service ID
+      TEMPLATE_ID: 'template_sozwa7c'      // Remplacer par votre template ID
     };
 
     // ============================================================
@@ -768,4 +768,101 @@
         signature_locataire: signaturePadLocataire.toDataURL()
       };
 
+             // Envoyer au bailleur
+        await emailjs.send(
+          EMAILJS_CONFIG.SERVICE_ID,
+          EMAILJS_CONFIG.TEMPLATE_ID,
+          templateParams
+        );
+
+        // Envoyer au locataire
+        const locataireParams = { ...templateParams };
+        locataireParams.to_bailleur = locataireEmail;
+        locataireParams.to_locataire = locataireEmail;
+        
+        await emailjs.send(
+          EMAILJS_CONFIG.SERVICE_ID,
+          EMAILJS_CONFIG.TEMPLATE_ID,
+          locataireParams
+        );
+
+        return true;
+      }
+
+      // ==========================================================
+      // 7. BOUTON "SIGNER ET ENVOYER"
+      // ==========================================================
+      const signAndSendBtn = document.getElementById('signAndSendBtn');
+
+      signAndSendBtn.addEventListener('click', async function() {
+        this.disabled = true;
+        const originalText = this.innerHTML;
+        this.innerHTML = '<span class="spinner"></span> Envoi en cours...';
+
+        try {
+          if (signaturePadBailleur.isEmpty() || signaturePadLocataire.isEmpty()) {
+            showToast('❌ Veuillez signer dans les deux zones avant d\'envoyer', 'error');
+            this.disabled = false;
+            this.innerHTML = originalText;
+            return;
+          }
+
+          const bailleurEmail = document.querySelector('[name="bailleur_email"]').value;
+          const locataireEmail = document.querySelector('[name="locataire_email"]').value;
+
+          if (!bailleurEmail || !locataireEmail) {
+            showToast('❌ Les emails du bailleur et du locataire sont obligatoires', 'error');
+            this.disabled = false;
+            this.innerHTML = originalText;
+            return;
+          }
+
+          showToast('📄 Génération du contrat PDF...', 'info');
+          const pdfDataUrl = await generateContractPDF();
+
+          showToast('✉️ Envoi du contrat par email...', 'info');
+          await sendContractByEmail(pdfDataUrl);
+
+          showToast('✅ Contrat envoyé avec succès aux deux parties !', 'success');
+
+        } catch (error) {
+          console.error('Erreur:', error);
+          showToast('❌ Erreur lors de l\'envoi : ' + error.message, 'error');
+        } finally {
+          this.disabled = false;
+          this.innerHTML = '✉️ Signer et envoyer le contrat';
+        }
+      });
+
+      // ==========================================================
+      // 8. TÉLÉCHARGEMENT PDF
+      // ==========================================================
+      document.getElementById('downloadPDF').addEventListener('click', async function() {
+        try {
+          this.disabled = true;
+          this.textContent = '⏳ Génération...';
+          
+          const pdfDataUrl = await generateContractPDF();
+          
+          const link = document.createElement('a');
+          link.href = pdfDataUrl;
+          link.download = 'contrat-velo-signe.pdf';
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          
+          showToast('✅ PDF téléchargé avec succès !', 'success');
+        } catch (error) {
+          console.error('Erreur:', error);
+          showToast('❌ Erreur lors du téléchargement : ' + error.message, 'error');
+        } finally {
+          this.disabled = false;
+          this.textContent = '⬇️ Télécharger le PDF';
+        }
+      });
+
+    })();
+  </script>
+</body>
+</html>
       try
