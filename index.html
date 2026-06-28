@@ -569,33 +569,83 @@
   // Téléchargement PDF
 document.getElementById('downloadPDF').addEventListener('click', async function() {
   const { jsPDF } = window.jspdf;
+  const element = document.getElementById('contrat-velo');
+
+  // Sauvegarder les styles
+  const originalOverflow = element.style.overflow;
+  const originalMaxHeight = element.style.maxHeight;
+  element.style.overflow = 'visible';
+  element.style.maxHeight = 'none';
+
+  // Capturer le formulaire
+  const canvas = await html2canvas(element, {
+    scale: 2,
+    backgroundColor: '#ffffff',
+    useCORS: true,
+    logging: false
+  });
+
+  // Restaurer les styles
+  element.style.overflow = originalOverflow;
+  element.style.maxHeight = originalMaxHeight;
+
+  const imgData = canvas.toDataURL('image/jpeg', 0.95);
+
   const pdf = new jsPDF('p', 'mm', 'a4');
-  
-  // Récupérer tous les fieldset du formulaire
-  const fieldsets = document.querySelectorAll('#contrat-velo fieldset');
-  
-  let isFirstPage = true;
-  
-  for (const fieldset of fieldsets) {
-    // Capturer chaque section individuellement
-    const canvas = await html2canvas(fieldset, {
-      scale: 2,
-      backgroundColor: '#ffffff',
-      useCORS: true
-    });
+  const pdfWidth = pdf.internal.pageSize.getWidth();
+  const pdfHeight = pdf.internal.pageSize.getHeight();
+  const margin = 10; // marge en mm
+
+  const usableWidth = pdfWidth - (margin * 2);
+  const imgAspectRatio = canvas.width / canvas.height;
+  const imgWidth = usableWidth;
+  const imgHeight = usableWidth / imgAspectRatio;
+
+  // Découpage en pages avec gestion des marges
+  let position = 0;
+  const pageHeightWithMargin = pdfHeight - (margin * 2);
+  let remainingHeight = imgHeight;
+
+  while (remainingHeight > 0) {
+    // Calculer la hauteur de la portion à afficher sur cette page
+    const portionHeight = Math.min(remainingHeight, pageHeightWithMargin);
+    const sourceY = position / imgHeight * canvas.height;
+    const sourceHeight = canvas.height * (portionHeight / imgHeight);
+
+    // Créer un canvas pour cette page
+    const pageCanvas = document.createElement('canvas');
+    pageCanvas.width = canvas.width;
+    pageCanvas.height = sourceHeight;
+    const ctx = pageCanvas.getContext('2d');
     
-    const imgData = canvas.toDataURL('image/jpeg', 0.95);
-    const imgWidth = pdf.internal.pageSize.getWidth() - 20;
-    const imgHeight = (canvas.height * imgWidth) / canvas.width;
-    
-    if (!isFirstPage) {
+    ctx.drawImage(
+      canvas,
+      0, sourceY,
+      canvas.width, sourceHeight,
+      0, 0,
+      canvas.width, sourceHeight
+    );
+
+    const pageImgData = pageCanvas.toDataURL('image/jpeg', 0.95);
+
+    if (position > 0) {
       pdf.addPage();
     }
-    
-    pdf.addImage(imgData, 'JPEG', 10, 10, imgWidth, imgHeight);
-    isFirstPage = false;
+
+    // Ajouter l'image avec une marge
+    pdf.addImage(
+      pageImgData,
+      'JPEG',
+      margin,
+      margin,
+      imgWidth,
+      portionHeight
+    );
+
+    position += portionHeight;
+    remainingHeight -= portionHeight;
   }
-  
+
   pdf.save('contrat-velo-signe.pdf');
 });
 </script>
