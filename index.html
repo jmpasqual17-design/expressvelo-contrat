@@ -169,32 +169,81 @@
        <legend>Accessoires fournis</legend>
        <label>Détail des accessoires<label> 
  
-  <label class="checkbox">
-          <input type="checkbox" name="extras" value="helmet">
-          <span class="checkbox-label">Casque</span>
-        </label>
+   <div class="accessory">
+    <label class="checkbox">
+      <input type="checkbox" name="extras" value="helmet">
+      <span class="checkbox-label">Casque</span>
+    </label>
+    <select name="state_helmet" class="state-select" aria-label="État Casque">
+      <option value="">État</option>
+      <option value="bon">Bon</option>
+      <option value="rayé">Rayé</option>
+      <option value="choc">Choc</option>
+      <option value="manquant">Manquant</option>
+    </select>
+  </div>
 
-        <label class="checkbox">
-          <input type="checkbox" name="extras" value="lock">
-          <span class="checkbox-label">Antivol</span>
-        </label>
+  <div class="accessory">
+    <label class="checkbox">
+      <input type="checkbox" name="extras" value="lock">
+      <span class="checkbox-label">Antivol</span>
+    </label>
+    <select name="state_lock" class="state-select" aria-label="État Antivol">
+      <option value="">État</option>
+      <option value="bon">Bon</option>
+      <option value="rayé">Rayé</option>
+      <option value="choc">Choc</option>
+      <option value="manquant">Manquant</option>
+    </select>
+  </div>
 
-        <label class="checkbox">
-          <input type="checkbox" name="extras" value="lights">
-          <span class="checkbox-label">Éclairage</span>
-        </label>
+  <div class="accessory">
+    <label class="checkbox">
+      <input type="checkbox" name="extras" value="lights">
+      <span class="checkbox-label">Éclairage</span>
+    </label>
+    <select name="state_lights" class="state-select" aria-label="État Éclairage">
+      <option value="">État</option>
+      <option value="bon">Bon</option>
+      <option value="rayé">Rayé</option>
+      <option value="choc">Choc</option>
+      <option value="manquant">Manquant</option>
+    </select>
+  </div>
 
-        <label class="checkbox">
-          <input type="checkbox" name="extras" value="basket">
-          <span class="checkbox-label">Panier</span>
-        </label>
+  <div class="accessory">
+    <label class="checkbox">
+      <input type="checkbox" name="extras" value="basket">
+      <span class="checkbox-label">Panier</span>
+    </label>
+    <select name="state_basket" class="state-select" aria-label="État Panier">
+      <option value="">État</option>
+      <option value="bon">Bon</option>
+      <option value="rayé">Rayé</option>
+      <option value="choc">Choc</option>
+      <option value="manquant">Manquant</option>
+    </select>
+  </div>
 
-       <label class="checkbox">
-          <input type="checkbox" name="extras" value="basket">
-          <span class="checkbox-label">Kit réparation</span>
-        </label>
-         
-       </fieldset>
+  <div class="accessory">
+    <label class="checkbox">
+      <input type="checkbox" name="extras" value="repairkit">
+      <span class="checkbox-label">Kit réparation</span>
+    </label>
+    <select name="state_repairkit" class="state-select" aria-label="État Kit réparation">
+      <option value="">État</option>
+      <option value="bon">Bon</option>
+      <option value="rayé">Rayé</option>
+      <option value="choc">Choc</option>
+      <option value="manquant">Manquant</option>
+    </select>
+  </div>
+
+  <label class="checkbox" style="margin-top:12px;">
+    <input type="checkbox" name="terms" value="accepted" required>
+    <span class="checkbox-label">J'ai lu et j'accepte les conditions de location</span>
+  </label>
+</fieldset>
   <fieldset>
     <legend>4. Durée de la location</legend>
     <div class="cols">
