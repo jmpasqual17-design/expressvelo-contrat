@@ -72,17 +72,6 @@
     </header>
 
     <form id="etatForm">
-      <!-- Photos input et aperçu -->
-  <label for="photos">Photos (avant/après)</label>
-  <input id="photos" name="photos" type="file" accept="image/*" multiple>
-  <div id="photosPreview" class="photos" aria-live="polite"></div>
-
-  <!-- Boutons : générer PDF et envoyer -->
-  <div class="actions">
-    <button type="button" class="button" id="generateSendBtn">Générer et envoyer (PDF)</button>
-    <button type="button" class="button secondary" id="saveEtat">Enregistrer localement</button>
-  </div>
-</form>
       <label for="ownerName">Propriétaire</label>
       <input type="text" id="ownerName" name="ownerName" placeholder="Nom du propriétaire">
 
@@ -172,12 +161,18 @@
 
       <!-- Photos placeholder (optionnel) -->
       <label>Photos (optionnel)</label>
-      <div class="photos">
-        <div class="photo-placeholder">Photo 1</div>
-        <div class="photo-placeholder">Photo 2</div>
-        <div class="photo-placeholder">Photo 3</div>
-      </div>
 
+      <!-- Photos input et aperçu -->
+  <label for="photos">Photos (avant/après)</label>
+  <input id="photos" name="photos" type="file" accept="image/*" multiple>
+  <div id="photosPreview" class="photos" aria-live="polite"></div>
+
+  <!-- Boutons : générer PDF et envoyer -->
+  <div class="actions">
+    <button type="button" class="button" id="generateSendBtn">Générer et envoyer (PDF)</button>
+    <button type="button" class="button secondary" id="saveEtat">Enregistrer localement</button>
+  </div>
+</form>
       <div class="actions">
         <button type="button" class="button" id="saveEtat">Enregistrer l'état</button>
         <button type="button" class="button secondary" id="downloadEtat">Télécharger PDF</button>
