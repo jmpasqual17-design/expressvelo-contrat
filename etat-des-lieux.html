@@ -67,7 +67,8 @@
 <body>
   <div class="container" id="contractContainer">
     <header>
-      <h1>État des lieux - ExpressVélo</h1>
+      <h1>Location de vélo</h1>
+      <h1>État des lieux</h1>
       <div class="meta">Pré‑rempli depuis le lien de réservation</div>
     </header>
 
@@ -167,7 +168,7 @@
       <label>Photos (optionnel)</label>
 
       <!-- Photos input et aperçu -->
-  <label for="photos">Photos (avant/après)</label>
+  <label for="photos">Photos (au départ)</label>
   <input id="photos" name="photos" type="file" accept="image/*" multiple>
   <div id="photosPreview" class="photos" aria-live="polite"></div>
 
@@ -177,10 +178,6 @@
     <button type="button" class="button secondary" id="saveEtat">Enregistrer localement</button>
   </div>
 </form>
-      <div class="actions">
-        <button type="button" class="button" id="saveEtat">Enregistrer l'état</button>
-        <button type="button" class="button secondary" id="downloadEtat">Télécharger PDF</button>
-      </div>
 
       <div class="note">Tu peux pré‑remplir cette page via l’URL (voir instructions ci‑dessous).</div>
     </form>
