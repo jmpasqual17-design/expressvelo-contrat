@@ -1,393 +1,556 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <title>Contrat de location de vélo entre particuliers</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contrat de location de vélo · Particuliers</title>
+  <!-- Police moderne & icônes optionnelles -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&display=swap" rel="stylesheet" />
   <style>
-    body { font-family: Arial, sans-serif; max-width: 900px; margin: 20px auto; line-height: 1.5; }
-    h1, h2 { text-align: center; }
-    fieldset { margin-bottom: 20px; padding: 15px; }
-    legend { font-weight: bold; }
-    label { display: block; margin-top: 8px; }
-    input, select, textarea { width: 100%; padding: 6px; margin-top: 4px; box-sizing: border-box; }
-    .cols { display: flex; gap: 20px; }
-    .col { flex: 1; }
-    .sign-block { margin-top: 20px; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #f2f4f8;
+      padding: 2rem 1.5rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .form-card {
+      max-width: 920px;
+      width: 100%;
+      background: #ffffff;
+      border-radius: 28px;
+      box-shadow: 0 20px 50px rgba(0, 20, 40, 0.10);
+      padding: 2.5rem 2.5rem 2rem;
+      transition: all 0.2s;
+    }
+
+    /* En-tête */
+    .contract-header {
+      margin-bottom: 2.25rem;
+      border-bottom: 2px solid #eef2f6;
+      padding-bottom: 1.25rem;
+    }
+
+    .contract-header h1 {
+      font-weight: 600;
+      font-size: 2rem;
+      letter-spacing: -0.02em;
+      color: #0b1e33;
+      margin: 0 0 0.1rem 0;
+    }
+
+    .contract-header h2 {
+      font-weight: 400;
+      font-size: 1.1rem;
+      color: #3e5a76;
+      margin: 0 0 0.6rem 0;
+      letter-spacing: 0.4px;
+    }
+
+    .contract-header .subhead {
+      font-size: 0.95rem;
+      color: #4a5e74;
+      background: #f0f4fa;
+      padding: 0.7rem 1rem;
+      border-radius: 12px;
+      display: inline-block;
+      margin-top: 0.25rem;
+    }
+
+    /* Fieldset + légende */
+    fieldset {
+      border: none;
+      margin: 0 0 2rem 0;
+      padding: 0;
+      background: #fafcff;
+      border-radius: 20px;
+      padding: 1.5rem 1.5rem 1.25rem;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+      border: 1px solid #e7edf4;
+      transition: border 0.2s;
+    }
+
+    fieldset:hover {
+      border-color: #cddae9;
+    }
+
+    legend {
+      font-weight: 600;
+      font-size: 1.1rem;
+      color: #0f2a44;
+      padding: 0 0.6rem 0 0;
+      letter-spacing: -0.01em;
+      background: transparent;
+      width: auto;
+      float: none;
+    }
+
+    .legend-desc {
+      font-size: 0.9rem;
+      font-weight: 400;
+      color: #4d6a88;
+      margin-left: 0.6rem;
+    }
+
+    /* Grilles */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.2rem 1.8rem;
+    }
+
+    .full-width {
+      grid-column: 1 / -1;
+    }
+
+    .label-block {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .label-block label {
+      font-weight: 500;
+      font-size: 0.86rem;
+      color: #1f3b57;
+      letter-spacing: 0.01em;
+    }
+
+    .label-block .hint {
+      font-weight: 400;
+      font-size: 0.75rem;
+      color: #6d7f96;
+      margin-left: 0.25rem;
+    }
+
+    input, select, textarea {
+      font-family: 'Inter', sans-serif;
+      width: 100%;
+      padding: 0.7rem 0.9rem;
+      font-size: 0.95rem;
+      border: 1px solid #d7e0e9;
+      border-radius: 14px;
+      background: #ffffff;
+      transition: 0.15s ease;
+      color: #122b44;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: #2a6b9c;
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(42, 107, 156, 0.15);
+      background: #ffffff;
+    }
+
+    select {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%233a5a7a' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 1rem center;
+      background-size: 12px 8px;
+      padding-right: 2.4rem;
+    }
+
+    /* Accessoires : ligne avec checkbox + select */
+    .accessory-row {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      flex-wrap: wrap;
+      padding: 0.25rem 0 0.5rem;
+      border-bottom: 1px solid #eef3f8;
+    }
+
+    .accessory-row:last-of-type {
+      border-bottom: none;
+    }
+
+    .accessory-row .checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      min-width: 130px;
+    }
+
+    .accessory-row input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: #1d4f7a;
+      margin: 0;
+      flex-shrink: 0;
+      border-radius: 5px;
+    }
+
+    .accessory-row .checkbox-label {
+      font-weight: 450;
+      font-size: 0.9rem;
+      color: #1f3a57;
+    }
+
+    .accessory-row select {
+      width: auto;
+      min-width: 110px;
+      padding: 0.4rem 2rem 0.4rem 0.9rem;
+      font-size: 0.85rem;
+      border-radius: 40px;
+      background-color: #f5f9fe;
+      border-color: #d3dde9;
+    }
+
+    /* Checkbox seule */
+    .checkbox-single {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin-top: 0.8rem;
+    }
+
+    .checkbox-single input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      accent-color: #1d4f7a;
+      margin: 0;
+    }
+
+    .checkbox-single .label {
+      font-weight: 450;
+      color: #1f3a57;
+    }
+
+    /* Signatures */
+    .sign-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      margin-top: 0.5rem;
+    }
+
+    .sign-box {
+      background: #f8fbfe;
+      border-radius: 18px;
+      padding: 1.2rem 1rem 1.2rem;
+      border: 1px solid #e2eaf3;
+    }
+
+    .sign-box h3 {
+      font-weight: 600;
+      font-size: 1rem;
+      color: #0b2a48;
+      margin-bottom: 0.6rem;
+    }
+
+    .sign-box .mention {
+      font-size: 0.8rem;
+      color: #3b5b7a;
+      background: #eaf1fa;
+      padding: 0.2rem 0.8rem;
+      border-radius: 30px;
+      display: inline-block;
+      margin: 0.3rem 0 0.6rem;
+    }
+
+    .signature-canvas {
+      width: 100%;
+      height: 110px;
+      background: white;
+      border-radius: 14px;
+      border: 1px solid #cfddee;
+      cursor: crosshair;
+      display: block;
+      margin: 0.5rem 0 0.4rem;
+    }
+
+    .btn-ghost {
+      background: transparent;
+      border: 1px solid #bcccdb;
+      padding: 0.3rem 1rem;
+      border-radius: 40px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: #2b4a6a;
+      cursor: pointer;
+      transition: 0.15s;
+    }
+
+    .btn-ghost:hover {
+      background: #dce6f2;
+      border-color: #8ba3c0;
+    }
+
+    /* Boutons actions */
+    .actions {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-top: 1.8rem;
+      padding-top: 1.5rem;
+      border-top: 2px solid #e6edf5;
+    }
+
+    .btn-primary {
+      background: #0b2a48;
+      border: none;
+      padding: 0.9rem 2.2rem;
+      border-radius: 60px;
+      font-weight: 500;
+      font-size: 1rem;
+      color: white;
+      cursor: pointer;
+      transition: 0.15s;
+      flex: 1 1 auto;
+      min-width: 180px;
+      box-shadow: 0 4px 10px rgba(11, 42, 72, 0.15);
+      border: 1px solid #0b2a48;
+    }
+
+    .btn-primary:hover {
+      background: #1b4064;
+      transform: scale(1.01);
+      box-shadow: 0 8px 18px rgba(11, 42, 72, 0.18);
+    }
+
+    .btn-secondary {
+      background: white;
+      border: 1px solid #b4c8db;
+      padding: 0.9rem 2.2rem;
+      border-radius: 60px;
+      font-weight: 500;
+      font-size: 1rem;
+      color: #1c3b5a;
+      cursor: pointer;
+      transition: 0.15s;
+      flex: 1 1 auto;
+      min-width: 160px;
+    }
+
+    .btn-secondary:hover {
+      background: #f2f7fe;
+      border-color: #7999b9;
+    }
+
+    .text-small {
+      font-size: 0.8rem;
+      color: #546f8b;
+      margin-top: 0.3rem;
+      padding-left: 0.1rem;
+    }
+
+    /* adaptation mobile */
+    @media (max-width: 680px) {
+      .form-card { padding: 1.5rem; }
+      .grid-2 { grid-template-columns: 1fr; gap: 0.8rem; }
+      .sign-grid { grid-template-columns: 1fr; gap: 1.5rem; }
+      .accessory-row { flex-wrap: wrap; }
+      .accessory-row select { width: 100%; }
+      .actions { flex-direction: column; }
+      .btn-primary, .btn-secondary { width: 100%; }
+    }
+
+    /* petit texte d'info */
+    .info-badge {
+      background: #eaf1fa;
+      color: #1a3a58;
+      padding: 0.4rem 1rem;
+      border-radius: 40px;
+      font-size: 0.8rem;
+      display: inline-block;
+    }
   </style>
-  <style>
-  body {
-    font-family: Arial, sans-serif;
-    background: #F3F4F6;
-    margin: 0;
-    padding: 20px;
-  }
-
-  .container {
-    max-width: 700px;
-    margin: auto;
-    background: white;
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-  }
-
-  h1 {
-    color: #1E3A8A;
-    text-align: center;
-    margin-bottom: 20px;
-  }
-
-  label {
-    font-weight: bold;
-    color: #374151;
-    display: block;
-    margin-top: 15px;
-  }
-
-  input, textarea, select {
-    width: 100%;
-    padding: 12px;
-    margin-top: 5px;
-    border: 1px solid #D1D5DB;
-    border-radius: 8px;
-    font-size: 15px;
-  }
-
-  input:focus, textarea:focus {
-    border-color: #3B82F6;
-    outline: none;
-    box-shadow: 0 0 4px rgba(59,130,246,0.4);
-  }
-
-  .button {
-    display: block;
-    width: 100%;
-    background: #1E3A8A;
-    color: white;
-    padding: 15px;
-    border-radius: 10px;
-    text-align: center;
-    font-size: 18px;
-    margin-top: 25px;
-    cursor: pointer;
-    text-decoration: none;
-  }
-
-  .button:hover {
-    background: #3B82F6;
-  }
-</style>
-  
 </head>
 <body>
-  
-  <!-- Ton formulaire ici -->
-
-<h1>CONTRAT DE LOCATION DE VÉLO</h1>
-<h2>ENTRE PARTICULIERS</h2>
-<p>Contrat à compléter et signer avant toute remise du vélo (en deux exemplaires).</p>
-<p>Le locataire atteste être titulaire d'un document d'identité en cours de validité, présenté au propriétaire avant la signature.</p>
-
-<form id="contrat-velo">
-
-  <!-- 1. Bailleur -->
-  <fieldset>
-    <legend>1. Identification du bailleur (propriétaire)</legend>
-    <label>Nom et prénom
-      <input type="text" name="bailleur_nom" required>
-    </label>
-    <label>Adresse
-      <input type="text" name="bailleur_adresse" required>
-    </label>
-    <label>Téléphone
-      <input type="tel" name="bailleur_tel">
-    </label>
-    <label>Email
-      <input type="email" name="bailleur_email">
-    </label>
-  </fieldset>
-
-  <!-- 2. Locataire -->
-  <fieldset>
-    <legend>2. Identification du locataire (utilisateur)</legend>
-    <label>Nom et prénom
-      <input type="text" name="locataire_nom" required>
-    </label>
-    <label>Adresse
-      <input type="text" name="locataire_adresse" required>
-    </label>
-    <label>Téléphone
-      <input type="tel" name="locataire_tel">
-    </label>
-    <label>Email
-      <input type="email" name="locataire_email">
-    </label>
-    <label>Pièce d’identité (type et n°)
-      <input type="text" name="locataire_id">
-    </label>
-  </fieldset>
-
-  <!-- 3. Vélo -->
-  <fieldset>
-    <legend>3. Objet du contrat – Fiche descriptive du vélo</legend>
-    <p>Le présent contrat porte sur la mise à disposition temporaire, à titre onéreux, 
-      d’un vélo appartenant au Bailleur, identifié dans la fiche descriptive ci-dessous. 
-      Le Locataire reconnaît recevoir le vélo en bon état apparent de fonctionnement, sauf 
-      réserves expressément mentionnées dans l’état des lieux contradictoire établi au départ.</p>
-    <label>Caractéristique du vélo :<label>
-    <label>Marque / modèle
-      <input type="text" name="velo_modele">
-    </label>
-    <label>Type
-      <select name="velo_type">
-        <option value="mecanique">Mécanique</option>
-        <option value="electrique">Électrique</option>
-      </select>
-    </label>
-    <label>Numéro de série
-      <input type="text" name="velo_serie">
-    </label>
-    <label>Couleur
-      <input type="text" name="velo_couleur">
-    </label>
-    <label>Kilométrage estimé
-      <input type="number" name="velo_km" min="0">
-    </label>
-    <label>Date d’achat
-      <input type="date" name="velo_date_achat">
-    </label>
-    <label>Valeur à neuf (€)
-      <input type="number" name="velo_val_neuf" min="0" step="0.01">
-    </label>
-    <label>Valeur actuelle estimée (€)
-      <input type="number" name="velo_val_actuelle" min="0" step="0.01">
-    </label>
-  </fieldset>
-      
-  <!-- Accessoires -->
-  <fieldset>
-       <legend>Accessoires fournis</legend>
-       <label>Détail des accessoires<label> 
- 
-   <div class="accessory">
-    <label class="checkbox">
-      <input type="checkbox" name="extras" value="helmet">
-      <span class="checkbox-label">Casque</span>
-    </label>
-    <select name="state_helmet" class="state-select" aria-label="État Casque">
-      <option value="">État</option>
-      <option value="bon">Bon</option>
-      <option value="rayé">Rayé</option>
-      <option value="choc">Choc</option>
-      <option value="manquant">Manquant</option>
-    </select>
-  </div>
-
-  <div class="accessory">
-    <label class="checkbox">
-      <input type="checkbox" name="extras" value="lock">
-      <span class="checkbox-label">Antivol</span>
-    </label>
-    <select name="state_lock" class="state-select" aria-label="État Antivol">
-      <option value="">État</option>
-      <option value="bon">Bon</option>
-      <option value="rayé">Rayé</option>
-      <option value="choc">Choc</option>
-      <option value="manquant">Manquant</option>
-    </select>
-  </div>
-
-  <div class="accessory">
-    <label class="checkbox">
-      <input type="checkbox" name="extras" value="lights">
-      <span class="checkbox-label">Éclairage</span>
-    </label>
-    <select name="state_lights" class="state-select" aria-label="État Éclairage">
-      <option value="">État</option>
-      <option value="bon">Bon</option>
-      <option value="rayé">Rayé</option>
-      <option value="choc">Choc</option>
-      <option value="manquant">Manquant</option>
-    </select>
-  </div>
-
-  <div class="accessory">
-    <label class="checkbox">
-      <input type="checkbox" name="extras" value="basket">
-      <span class="checkbox-label">Panier</span>
-    </label>
-    <select name="state_basket" class="state-select" aria-label="État Panier">
-      <option value="">État</option>
-      <option value="bon">Bon</option>
-      <option value="rayé">Rayé</option>
-      <option value="choc">Choc</option>
-      <option value="manquant">Manquant</option>
-    </select>
-  </div>
-
-  <div class="accessory">
-    <label class="checkbox">
-      <input type="checkbox" name="extras" value="repairkit">
-      <span class="checkbox-label">Kit réparation</span>
-    </label>
-    <select name="state_repairkit" class="state-select" aria-label="État Kit réparation">
-      <option value="">État</option>
-      <option value="bon">Bon</option>
-      <option value="rayé">Rayé</option>
-      <option value="choc">Choc</option>
-      <option value="manquant">Manquant</option>
-    </select>
-  </div>
-
-  <label class="checkbox" style="margin-top:12px;">
-    <input type="checkbox" name="terms" value="accepted" required>
-    <span class="checkbox-label">Je reconnais avoir reçu les accessoires en l'état</span>
-  </label>
-</fieldset>
-  <fieldset>
-    <legend>4. Durée de la location</legend>
-    <div class="cols">
-      <div class="col">
-        <label>Date et heure de début
-          <input type="datetime-local" name="date_debut" required>
-        </label>
-      </div>
-      <div class="col">
-        <label>Date et heure de fin
-          <input type="datetime-local" name="date_fin" required>
-        </label>
-      </div>
+<div class="form-card">
+  <!-- En-tête -->
+  <div class="contract-header">
+    <h1>📄 Contrat de location</h1>
+    <h2>Vélo · entre particuliers</h2>
+    <div class="subhead">
+      ⚡ À compléter et signer avant la remise du vélo (deux exemplaires)
     </div>
-    <label>Retard de restitution (€/heure)
-      <input type="number" name="retard_tarif" min="0" step="0.01">
-    </label>
-  </fieldset>
-
-  <!-- 5. Prix -->
-  <fieldset>
-    <legend>5. Prix et paiement</legend>
-    <label>Tarif de location (€/jour ou €/semaine)
-      <input type="text" name="tarif_location">
-    </label>
-    <label>Montant total estimé (€)
-      <input type="number" name="montant_total" min="0" step="0.01">
-    </label>
-    <label>Dépôt de garantie (€)
-      <input type="number" name="caution" min="0" step="0.01">
-    </label>
-    <label>Mode de paiement
-      <input type="text" name="mode_paiement" placeholder="Espèces / virement / CB / autre">
-    </label>
-  </fieldset>
-
-  <!-- 6. Assurance -->
-  <fieldset>
-    <legend>6. Assurance</legend>
-    <label>Vol
-      <select name="assurance_vol">
-        <option value="non">Non</option>
-        <option value="oui">Oui</option>
-      </select>
-    </label>
-    <label>Casse accidentelle
-      <select name="assurance_casse">
-        <option value="non">Non</option>
-        <option value="oui">Oui</option>
-      </select>
-    </label>
-    <label>Dommages matériels
-      <select name="assurance_dom">
-        <option value="non">Non</option>
-        <option value="oui">Oui</option>
-      </select>
-    </label>
-    <label>Batterie (VAE)
-      <select name="assurance_batterie">
-        <option value="non">Non</option>
-        <option value="oui">Oui</option>
-      </select>
-    </label>
-    <label>Franchise (€)
-      <input type="number" name="franchise" min="0" step="0.01">
-    </label>
-  </fieldset>
-
-  <!-- 7–15 : texte fixe -->
-  <fieldset>
-    <legend>Conditions générales</legend>
-    <p>
-      Le présent contrat a pour objet de définir les conditions dans lesquelles le loueur met temporairement à disposition
-      du Locataire le vélo décrit ci-dessus. Les parties déclarent agir en qualité de particuliers, être juridiquement
-      capables de contracter et accepter l’ensemble des stipulations du présent contrat sans réserve.
-    </p>
-    <p>
-      Le Locataire s’engage à utiliser le vélo de manière prudente, à respecter le Code de la route, à maintenir le vélo
-      en bon état, à utiliser systématiquement l’antivol fourni, à ne pas prêter ou sous-louer le vélo, à ne pas le modifier
-      et à le restituer complet.
-    </p>
-    <p>
-      Le Bailleur s’engage à remettre un vélo conforme à la description, propre, entretenu et en état normal de
-      fonctionnement, sous réserve des réserves indiquées dans l’état des lieux.
-    </p>
-    <p>
-      Les pénalités, responsabilités, données personnelles, état des lieux, droit applicable et modalités de règlement des
-      litiges sont conformes au texte complet du contrat de location de vélo entre particuliers annexé.
-    </p>
-  </fieldset>
-
-  <!-- 16. Signatures -->
-  <fieldset>
-    <legend>16. Signatures</legend>
-    <label>Lieu
-      <input type="text" name="lieu">
-    </label>
-    <label>Date
-      <input type="date" name="date_signature">
-    </label>
-
-    <div class="cols sign-block">
-      <div class="col">
-        <h3>Le Bailleur (propriétaire)</h3>
-        <label>Nom
-          <input type="text" name="bailleur_nom_signature">
-        </label>
-        <p>Mention manuscrite : « Lu et approuvé, bon pour accord »</p>
-<h3>Signature du bailleur</h3>
-<canvas id="signature-bailleur" width="300" height="150" style="border:1px solid #000;"></canvas>
-<button type="button" onclick="clearSignature('bailleur')">Effacer</button>
-<input type="hidden" name="signatureBailleur" id="signatureBailleur">
-<!-- Zone de signature (à remplacer par un canvas si tu veux une vraie signature dessinée) -->
-      </div>
-      <div class="col">
-        <h3>Le Locataire (utilisateur)</h3>
-        <label>Nom
-          <input type="text" name="locataire_nom_signature">
-        </label>
-        <p>Mention manuscrite : « Lu et approuvé, bon pour accord »</p>
-<h3>Signature du locataire</h3>
-<canvas id="signature-locataire" width="300" height="150" style="border:1px solid #000;"></canvas>
-<button type="button" onclick="clearSignature('locataire')">Effacer</button>
-<input type="hidden" name="signatureLocataire" id="signatureLocataire">
-      </div>
+    <div style="margin-top: 0.5rem; font-size: 0.9rem; color: #305a7a;">
+      Le locataire atteste être titulaire d’un document d’identité valide, présenté au propriétaire.
     </div>
-  </fieldset>
+  </div>
 
-  <button type="submit">Générer / enregistrer le contrat</button>
-  <button type="button" id="downloadPDF">Télécharger le contrat en PDF</button>
+  <form id="contrat-velo">
 
-</form>
-<script>
-const params = new URLSearchParams(window.location.search);
-params.forEach((value, key) => {
-  const field = document.querySelector(`[name="${key}"]`);
-  if (field) field.value = value;
-});
-</script>
+    <!-- 1. Bailleur -->
+    <fieldset>
+      <legend>1. Bailleur (propriétaire)</legend>
+      <div class="grid-2">
+        <div class="label-block"><label>Nom et prénom</label><input type="text" name="bailleur_nom" required /></div>
+        <div class="label-block"><label>Adresse</label><input type="text" name="bailleur_adresse" required /></div>
+        <div class="label-block"><label>Téléphone</label><input type="tel" name="bailleur_tel" /></div>
+        <div class="label-block"><label>Email</label><input type="email" name="bailleur_email" /></div>
+      </div>
+    </fieldset>
+
+    <!-- 2. Locataire -->
+    <fieldset>
+      <legend>2. Locataire (utilisateur)</legend>
+      <div class="grid-2">
+        <div class="label-block"><label>Nom et prénom</label><input type="text" name="locataire_nom" required /></div>
+        <div class="label-block"><label>Adresse</label><input type="text" name="locataire_adresse" required /></div>
+        <div class="label-block"><label>Téléphone</label><input type="tel" name="locataire_tel" /></div>
+        <div class="label-block"><label>Email</label><input type="email" name="locataire_email" /></div>
+        <div class="full-width label-block"><label>Pièce d’identité (type et n°)</label><input type="text" name="locataire_id" /></div>
+      </div>
+    </fieldset>
+
+    <!-- 3. Vélo -->
+    <fieldset>
+      <legend>3. Objet du contrat · vélo</legend>
+      <div style="font-size:0.9rem; color:#2b4a6a; background:#eef5fc; padding:0.5rem 1rem; border-radius:14px; margin-bottom:1.2rem;">
+        Le locataire reconnaît recevoir le vélo en bon état de fonctionnement, sauf réserves mentionnées dans l’état des lieux.
+      </div>
+      <div class="grid-2">
+        <div class="label-block"><label>Marque / modèle</label><input type="text" name="velo_modele" /></div>
+        <div class="label-block"><label>Type</label>
+          <select name="velo_type"><option value="mecanique">Mécanique</option><option value="electrique">Électrique</option></select>
+        </div>
+        <div class="label-block"><label>Numéro de série</label><input type="text" name="velo_serie" /></div>
+        <div class="label-block"><label>Couleur</label><input type="text" name="velo_couleur" /></div>
+        <div class="label-block"><label>Kilométrage estimé</label><input type="number" name="velo_km" min="0" /></div>
+        <div class="label-block"><label>Date d’achat</label><input type="date" name="velo_date_achat" /></div>
+        <div class="label-block"><label>Valeur à neuf (€)</label><input type="number" name="velo_val_neuf" min="0" step="0.01" /></div>
+        <div class="label-block"><label>Valeur actuelle estimée (€)</label><input type="number" name="velo_val_actuelle" min="0" step="0.01" /></div>
+      </div>
+    </fieldset>
+
+    <!-- Accessoires -->
+    <fieldset>
+      <legend>Accessoires fournis</legend>
+      <div style="display:flex; flex-direction:column; gap:0.2rem;">
+        <div class="accessory-row">
+          <span class="checkbox-group"><input type="checkbox" name="extras" value="helmet" /> <span class="checkbox-label">Casque</span></span>
+          <select name="state_helmet" aria-label="État Casque"><option value="">État</option><option value="bon">Bon</option><option value="rayé">Rayé</option><option value="choc">Choc</option><option value="manquant">Manquant</option></select>
+        </div>
+        <div class="accessory-row">
+          <span class="checkbox-group"><input type="checkbox" name="extras" value="lock" /> <span class="checkbox-label">Antivol</span></span>
+          <select name="state_lock" aria-label="État Antivol"><option value="">État</option><option value="bon">Bon</option><option value="rayé">Rayé</option><option value="choc">Choc</option><option value="manquant">Manquant</option></select>
+        </div>
+        <div class="accessory-row">
+          <span class="checkbox-group"><input type="checkbox" name="extras" value="lights" /> <span class="checkbox-label">Éclairage</span></span>
+          <select name="state_lights" aria-label="État Éclairage"><option value="">État</option><option value="bon">Bon</option><option value="rayé">Rayé</option><option value="choc">Choc</option><option value="manquant">Manquant</option></select>
+        </div>
+        <div class="accessory-row">
+          <span class="checkbox-group"><input type="checkbox" name="extras" value="basket" /> <span class="checkbox-label">Panier</span></span>
+          <select name="state_basket" aria-label="État Panier"><option value="">État</option><option value="bon">Bon</option><option value="rayé">Rayé</option><option value="choc">Choc</option><option value="manquant">Manquant</option></select>
+        </div>
+        <div class="accessory-row">
+          <span class="checkbox-group"><input type="checkbox" name="extras" value="repairkit" /> <span class="checkbox-label">Kit réparation</span></span>
+          <select name="state_repairkit" aria-label="État Kit"><option value="">État</option><option value="bon">Bon</option><option value="rayé">Rayé</option><option value="choc">Choc</option><option value="manquant">Manquant</option></select>
+        </div>
+        <div class="checkbox-single">
+          <input type="checkbox" name="terms" value="accepted" required />
+          <span class="label">Je reconnais avoir reçu les accessoires en l’état</span>
+        </div>
+      </div>
+    </fieldset>
+
+    <!-- 4. Durée -->
+    <fieldset>
+      <legend>4. Durée de location</legend>
+      <div class="grid-2">
+        <div class="label-block"><label>Début</label><input type="datetime-local" name="date_debut" required /></div>
+        <div class="label-block"><label>Fin</label><input type="datetime-local" name="date_fin" required /></div>
+        <div class="label-block"><label>Retard de restitution (€/h)</label><input type="number" name="retard_tarif" min="0" step="0.01" /></div>
+      </div>
+    </fieldset>
+
+    <!-- 5. Prix -->
+    <fieldset>
+      <legend>5. Prix &amp; paiement</legend>
+      <div class="grid-2">
+        <div class="label-block"><label>Tarif (€/jour ou €/semaine)</label><input type="text" name="tarif_location" /></div>
+        <div class="label-block"><label>Montant total estimé (€)</label><input type="number" name="montant_total" min="0" step="0.01" /></div>
+        <div class="label-block"><label>Dépôt de garantie (€)</label><input type="number" name="caution" min="0" step="0.01" /></div>
+        <div class="label-block"><label>Mode de paiement</label><input type="text" name="mode_paiement" placeholder="Espèces / virement / CB" /></div>
+      </div>
+    </fieldset>
+
+    <!-- 6. Assurance -->
+    <fieldset>
+      <legend>6. Assurance &amp; franchise</legend>
+      <div class="grid-2">
+        <div class="label-block"><label>Vol</label><select name="assurance_vol"><option value="non">Non</option><option value="oui">Oui</option></select></div>
+        <div class="label-block"><label>Casse accidentelle</label><select name="assurance_casse"><option value="non">Non</option><option value="oui">Oui</option></select></div>
+        <div class="label-block"><label>Dommages matériels</label><select name="assurance_dom"><option value="non">Non</option><option value="oui">Oui</option></select></div>
+        <div class="label-block"><label>Batterie (VAE)</label><select name="assurance_batterie"><option value="non">Non</option><option value="oui">Oui</option></select></div>
+        <div class="label-block"><label>Franchise (€)</label><input type="number" name="franchise" min="0" step="0.01" /></div>
+      </div>
+    </fieldset>
+
+    <!-- 7–15 Conditions générales (fixe) -->
+    <fieldset>
+      <legend>Conditions générales</legend>
+      <div style="font-size:0.92rem; color:#1a3550; line-height:1.6; display:flex; flex-direction:column; gap:0.6rem;">
+        <p>Le présent contrat définit les conditions de mise à disposition temporaire du vélo décrit. Les parties déclarent agir en qualité de particuliers, être capables de contracter et accepter les stipulations sans réserve.</p>
+        <p>Le locataire s’engage à utiliser le vélo avec prudence, respecter le Code de la route, maintenir le vélo en bon état, utiliser l’antivol fourni, ne pas prêter ni modifier le vélo, et le restituer complet.</p>
+        <p>Le bailleur s’engage à remettre un vélo conforme à la description, propre, entretenu et en état normal de fonctionnement, sous réserve des réserves de l’état des lieux.</p>
+        <p style="font-size:0.85rem; color:#3d5f7e; background:#ecf3fa; padding:0.3rem 0.8rem; border-radius:40px; display:inline-block; max-width:100%;">Les pénalités, responsabilités, données personnelles, état des lieux et droit applicable sont conformes au contrat type annexé.</p>
+      </div>
+    </fieldset>
+
+    <!-- 16. Signatures -->
+    <fieldset>
+      <legend>16. Signatures</legend>
+      <div class="grid-2" style="margin-bottom:1.2rem;">
+        <div class="label-block"><label>Lieu</label><input type="text" name="lieu" /></div>
+        <div class="label-block"><label>Date</label><input type="date" name="date_signature" /></div>
+      </div>
+
+      <div class="sign-grid">
+        <!-- Bailleur -->
+        <div class="sign-box">
+          <h3>Bailleur (propriétaire)</h3>
+          <div class="label-block"><label>Nom</label><input type="text" name="bailleur_nom_signature" /></div>
+          <div class="mention">✍️ « Lu et approuvé, bon pour accord »</div>
+          <canvas class="signature-canvas" id="signature-bailleur" width="300" height="110"></canvas>
+          <button type="button" class="btn-ghost" onclick="clearSignature('bailleur')">Effacer</button>
+          <input type="hidden" name="signatureBailleur" id="signatureBailleur" />
+        </div>
+
+        <!-- Locataire -->
+        <div class="sign-box">
+          <h3>Locataire (utilisateur)</h3>
+          <div class="label-block"><label>Nom</label><input type="text" name="locataire_nom_signature" /></div>
+          <div class="mention">✍️ « Lu et approuvé, bon pour accord »</div>
+          <canvas class="signature-canvas" id="signature-locataire" width="300" height="110"></canvas>
+          <button type="button" class="btn-ghost" onclick="clearSignature('locataire')">Effacer</button>
+          <input type="hidden" name="signatureLocataire" id="signatureLocataire" />
+        </div>
+      </div>
+    </fieldset>
+
+    <!-- Actions -->
+    <div class="actions">
+      <button type="submit" class="btn-primary">📌 Générer / enregistrer</button>
+      <button type="button" id="downloadPDF" class="btn-secondary">⬇️ Télécharger le PDF</button>
+    </div>
+  </form>
+</div>
+
+<!-- Signature pad -->
 <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.5/dist/signature_pad.umd.min.js"></script>
+<!-- jsPDF & html2canvas pour PDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
 <script>
+  // Initialisation des pads de signature
   const canvasBailleur = document.getElementById('signature-bailleur');
   const canvasLocataire = document.getElementById('signature-locataire');
-
   const signaturePadBailleur = new SignaturePad(canvasBailleur);
   const signaturePadLocataire = new SignaturePad(canvasLocataire);
 
@@ -396,47 +559,48 @@ params.forEach((value, key) => {
     if (type === 'locataire') signaturePadLocataire.clear();
   }
 
+  // Remplir les champs cachés avant soumission
   document.getElementById('contrat-velo').addEventListener('submit', function(e) {
     document.getElementById('signatureBailleur').value = signaturePadBailleur.toDataURL();
     document.getElementById('signatureLocataire').value = signaturePadLocataire.toDataURL();
+    // On laisse le formulaire se comporter normalement (ou on peut preventDefault si besoin)
+  });
+
+  // Téléchargement PDF
+  document.getElementById('downloadPDF').addEventListener('click', async function() {
+    const { jsPDF } = window.jspdf;
+    const element = document.getElementById('contrat-velo');
+
+    // On capture uniquement le formulaire
+    const canvas = await html2canvas(element, { scale: 2, backgroundColor: '#ffffff' });
+    const imgData = canvas.toDataURL('image/png');
+
+    const pdf = new jsPDF('p', 'mm', 'a4');
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+
+    let position = 0;
+    let heightLeft = pdfHeight;
+
+    pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, pdfHeight);
+    heightLeft -= pdf.internal.pageSize.getHeight();
+
+    while (heightLeft > 0) {
+      pdf.addPage();
+      position = -pdf.internal.pageSize.getHeight();
+      pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, pdfHeight);
+      heightLeft -= pdf.internal.pageSize.getHeight();
+    }
+
+    pdf.save('contrat-velo-signe.pdf');
+  });
+
+  // Pré-remplir avec les paramètres GET (si présents)
+  const params = new URLSearchParams(window.location.search);
+  params.forEach((value, key) => {
+    const field = document.querySelector(`[name="${key}"]`);
+    if (field) field.value = value;
   });
 </script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script>
-document.getElementById("downloadPDF").addEventListener("click", async () => {
-  const { jsPDF } = jspdf;
-
-  // On capture uniquement le formulaire (pas toute la page)
-  const element = document.getElementById("contrat-velo");
-
-  // Convertir en image
-  const canvas = await html2canvas(element, { scale: 2 });
-  const imgData = canvas.toDataURL("image/png");
-
-  // Création PDF A4
-  const pdf = new jsPDF("p", "mm", "a4");
-  const pdfWidth = pdf.internal.pageSize.getWidth();
-  const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-
-  // Si le contenu dépasse une page, on découpe automatiquement
-  let position = 0;
-  let heightLeft = pdfHeight;
-
-  pdf.addImage(imgData, "PNG", 0, position, pdfWidth, pdfHeight);
-  heightLeft -= pdf.internal.pageSize.getHeight();
-
-  while (heightLeft > 0) {
-    pdf.addPage();
-    position = -pdf.internal.pageSize.getHeight();
-    pdf.addImage(imgData, "PNG", 0, position, pdfWidth, pdfHeight);
-    heightLeft -= pdf.internal.pageSize.getHeight();
-  }
-
-  // Télécharger
-  pdf.save("contrat-velo-signe.pdf");
-});
-</script>
-
 </body>
 </html>
