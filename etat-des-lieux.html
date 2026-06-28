@@ -2,6 +2,8 @@
 <!doctype html>
 <html lang="fr">
 <head>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>État des lieux - ExpressVélo</title>
@@ -70,6 +72,17 @@
     </header>
 
     <form id="etatForm">
+      <!-- Photos input et aperçu -->
+  <label for="photos">Photos (avant/après)</label>
+  <input id="photos" name="photos" type="file" accept="image/*" multiple>
+  <div id="photosPreview" class="photos" aria-live="polite"></div>
+
+  <!-- Boutons : générer PDF et envoyer -->
+  <div class="actions">
+    <button type="button" class="button" id="generateSendBtn">Générer et envoyer (PDF)</button>
+    <button type="button" class="button secondary" id="saveEtat">Enregistrer localement</button>
+  </div>
+</form>
       <label for="ownerName">Propriétaire</label>
       <input type="text" id="ownerName" name="ownerName" placeholder="Nom du propriétaire">
 
@@ -238,5 +251,158 @@
       alert('Téléchargement PDF non activé ici. Je peux t’aider à ajouter la génération PDF.');
     });
   </script>
+  <script>
+  // Variables de config : remplacer par ton endpoint serverless
+  const SEND_ENDPOINT = '/.netlify/functions/sendPdf'; // ou l'URL complète de ta fonction
+  const SERVER_TOKEN = 'REPLACE_WITH_YOUR_TOKEN'; // token simple pour protéger l'endpoint
+
+  // Gestion des uploads et aperçu
+  const photosInput = document.getElementById('photos');
+  const photosPreview = document.getElementById('photosPreview');
+  let photosDataUrls = []; // tableau de dataURL
+
+  photosInput.addEventListener('change', async (e) => {
+    photosPreview.innerHTML = '';
+    photosDataUrls = [];
+    const files = Array.from(e.target.files).slice(0, 8); // limite raisonnable
+    for (const file of files) {
+      if (!file.type.startsWith('image/')) continue;
+      const reader = new FileReader();
+      reader.onload = () => {
+        const dataUrl = reader.result;
+        photosDataUrls.push(dataUrl);
+        const img = document.createElement('img');
+        img.src = dataUrl;
+        img.style.width = '140px';
+        img.style.height = '90px';
+        img.style.objectFit = 'cover';
+        img.style.borderRadius = '6px';
+        img.style.border = '1px solid #E5E7EB';
+        img.style.marginRight = '8px';
+        photosPreview.appendChild(img);
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+
+  // Récupérer les données du formulaire (inclut extras, états, notes)
+  function getEtatData() {
+    const form = document.getElementById('etatForm');
+    const data = Object.fromEntries(new FormData(form).entries());
+    const extras = Array.from(form.querySelectorAll('input[name="extras"]:checked')).map(cb => cb.value);
+    data.extras = extras;
+    // états et notes
+    const states = {};
+    extras.forEach(val => {
+      const sel = form.querySelector(`[name="state_${val}"]`);
+      const note = form.querySelector(`[name="note_${val}"]`);
+      states[val] = { state: sel ? sel.value || null : null, note: note ? note.value || null : null };
+    });
+    data.extras_states = states;
+    data.photos = photosDataUrls; // data URLs
+    return data;
+  }
+
+  // Générer PDF (capture du conteneur + photos en pages supplémentaires)
+  async function generatePdfBlob(containerEl, photos = []) {
+    // capture du conteneur en image
+    const canvas = await html2canvas(containerEl, { scale: 2, useCORS: true });
+    const imgData = canvas.toDataURL('image/png');
+
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ unit: 'pt', format: 'a4' });
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const margin = 20;
+    const usableWidth = pageWidth - margin * 2;
+    // ajouter la page principale
+    const imgProps = doc.getImageProperties(imgData);
+    const imgRatio = imgProps.width / imgProps.height;
+    const imgHeight = usableWidth / imgRatio;
+    doc.addImage(imgData, 'PNG', margin, margin, usableWidth, imgHeight);
+
+    // ajouter chaque photo sur une nouvelle page (max 8)
+    for (const dataUrl of photos.slice(0, 8)) {
+      doc.addPage();
+      const pImgProps = doc.getImageProperties(dataUrl);
+      const pRatio = pImgProps.width / pImgProps.height;
+      const pHeight = usableWidth / pRatio;
+      doc.addImage(dataUrl, 'PNG', margin, margin, usableWidth, pHeight);
+    }
+
+    // sortie en blob
+    const pdfBlob = doc.output('blob');
+    return pdfBlob;
+  }
+
+  // Convertir Blob en base64
+  function blobToBase64(blob) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result.split(',')[1]);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+  }
+
+  // Envoi au serverless
+  async function sendPdfToServer(pdfBase64, renterEmail, ownerEmail, bookingId = null) {
+    const payload = {
+      pdf: pdfBase64,
+      renterEmail,
+      ownerEmail,
+      bookingId
+    };
+    const res = await fetch(SEND_ENDPOINT, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': SERVER_TOKEN
+      },
+      body: JSON.stringify(payload)
+    });
+    if (!res.ok) {
+      const text = await res.text();
+      throw new Error(text || 'Erreur serveur');
+    }
+    return res.json();
+  }
+
+  // Handler du bouton
+  document.getElementById('generateSendBtn').addEventListener('click', async () => {
+    try {
+      const container = document.getElementById('contractContainer'); // ou l'ID du conteneur à capturer
+      const data = getEtatData();
+      // récupérer emails depuis le formulaire (ajoute ces champs si nécessaire)
+      const renterEmail = data.renterEmail || prompt('Email du locataire (renterEmail) :') || '';
+      const ownerEmail = data.ownerEmail || prompt('Email du propriétaire (ownerEmail) :') || '';
+      if (!renterEmail || !ownerEmail) return alert('Emails manquants.');
+
+      // générer PDF
+      const pdfBlob = await generatePdfBlob(container, data.photos || []);
+      const pdfBase64 = await blobToBase64(pdfBlob);
+
+      // envoyer au serveur
+      document.getElementById('generateSendBtn').disabled = true;
+      document.getElementById('generateSendBtn').textContent = 'Envoi en cours...';
+
+      await sendPdfToServer(pdfBase64, renterEmail, ownerEmail, data.bookingId || null);
+
+      alert('PDF envoyé au locataire et au propriétaire.');
+    } catch (err) {
+      console.error(err);
+      alert('Erreur : ' + (err.message || err));
+    } finally {
+      document.getElementById('generateSendBtn').disabled = false;
+      document.getElementById('generateSendBtn').textContent = 'Générer et envoyer (PDF)';
+    }
+  });
+
+  // sauvegarde locale existante
+  document.getElementById('saveEtat').addEventListener('click', () => {
+    const data = getEtatData();
+    localStorage.setItem('expressVeloEtat', JSON.stringify(data));
+    alert('État des lieux enregistré localement');
+  });
+</script>
 </body>
 </html>
