@@ -719,76 +719,42 @@
     // ============================================================
     // 6. FONCTION POUR ENVOYER LE CONTRAT PAR EMAIL
     // ============================================================
-    async function sendContractByEmail(pdfDataUrl) {
-      // Récupérer les emails
-      const bailleurEmail = document.querySelector('[name="bailleur_email"]').value;
-      const locataireEmail = document.querySelector('[name="locataire_email"]').value;
-      const bailleurNom = document.querySelector('[name="bailleur_nom"]').value || 'Bailleur';
-      const locataireNom = document.querySelector('[name="locataire_nom"]').value || 'Locataire';
-
-      if (!bailleurEmail || !locataireEmail) {
-        showToast('❌ Les emails du bailleur et du locataire sont obligatoires', 'error');
-        return false;
-      }
-
-      // Vérifier que les signatures sont remplies
-      if (signaturePadBailleur.isEmpty() || signaturePadLocataire.isEmpty()) {
-        showToast('❌ Les deux signatures sont obligatoires', 'error');
-        return false;
-      }
-
-      // Récupérer les données du formulaire
-      const form = document.getElementById('contrat-velo');
-      const formData = new FormData(form);
-      const formObject = {};
-      formData.forEach((value, key) => {
-        formObject[key] = value;
-      });
-
-      // Préparer les données pour EmailJS
-      const templateParams = {
-        to_bailleur: bailleurEmail,
-        to_locataire: locataireEmail,
-        bailleur_nom: bailleurNom,
-        locataire_nom: locataireNom,
-        contrat_pdf: pdfDataUrl,
-        // Informations supplémentaires pour le corps du mail
-        velo_modele: formObject.velo_modele || 'Non spécifié',
-        date_debut: formObject.date_debut || 'Non spécifiée',
-        date_fin: formObject.date_fin || 'Non spécifiée',
-        montant_total: formObject.montant_total || 'Non spécifié',
-        lieu: formObject.lieu || 'Non spécifié',
-        date_signature: formObject.date_signature || 'Non spécifiée',
-        bailleur_adresse: formObject.bailleur_adresse || '',
-        locataire_adresse: formObject.locataire_adresse || '',
-        bailleur_tel: formObject.bailleur_tel || '',
-        locataire_tel: formObject.locataire_tel || '',
-        // Les signatures encodées
-        signature_bailleur: signaturePadBailleur.toDataURL(),
-        signature_locataire: signaturePadLocataire.toDataURL()
-      };
-
-             // Envoyer au bailleur
-        await emailjs.send(
-          EMAILJS_CONFIG.SERVICE_ID,
-          EMAILJS_CONFIG.TEMPLATE_ID,
-          templateParams
-        );
-
-        // Envoyer au locataire
-        const locataireParams = { ...templateParams };
-        locataireParams.to_bailleur = locataireEmail;
-        locataireParams.to_locataire = locataireEmail;
-        
-        await emailjs.send(
-          EMAILJS_CONFIG.SERVICE_ID,
-          EMAILJS_CONFIG.TEMPLATE_ID,
-          locataireParams
-        );
-
-        return true;
-      }
-
+   async function sendContractByEmail(pdfDataUrl) {
+  const bailleurEmail = document.querySelector('[name="bailleur_email"]').value;
+  const locataireEmail = document.querySelector('[name="locataire_email"]').value;
+  const bailleurNom = document.querySelector('[name="bailleur_nom"]').value || 'Bailleur';
+  const locataireNom = document.querySelector('[name="locataire_nom"]').value || 'Locataire';
+  const veloModele = document.querySelector('[name="velo_modele"]').value || 'vélo';
+  
+  // 1. Télécharger le PDF
+  console.log('📥 Téléchargement du PDF...');
+  const link = document.createElement('a');
+  link.href = pdfDataUrl;
+  link.download = `contrat-velo-${bailleurNom}-${locataireNom}.pdf`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  
+  // 2. Ouvrir Gmail avec les informations pré-remplies
+  console.log('📧 Ouverture de Gmail...');
+  const sujet = encodeURIComponent(`Contrat de location de vélo - ${bailleurNom} & ${locataireNom}`);
+  const corps = encodeURIComponent(
+    `Bonjour,\n\n` +
+    `Le contrat de location pour le ${veloModele} a été signé entre :\n` +
+    `- Bailleur : ${bailleurNom} (${bailleurEmail})\n` +
+    `- Locataire : ${locataireNom} (${locataireEmail})\n\n` +
+    `📎 Veuillez trouver le contrat signé en pièce jointe à cet email.\n\n` +
+    `---\n` +
+    `Ce message a été généré automatiquement.\n` +
+    `Si vous rencontrez un problème, contactez les parties directement.`
+  );
+  
+  const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${bailleurEmail},${locataireEmail}&su=${sujet}&body=${corps}`;
+  window.open(gmailUrl, '_blank');
+  
+  showToast('✅ PDF téléchargé. Envoyez-le par email.', 'success');
+  return true;
+}
       // ==========================================================
       // 7. BOUTON "SIGNER ET ENVOYER"
       // ==========================================================
