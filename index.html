@@ -567,40 +567,37 @@
   });
 
   // Téléchargement PDF
-  document.getElementById('downloadPDF').addEventListener('click', async function() {
-    const { jsPDF } = window.jspdf;
-    const element = document.getElementById('contrat-velo');
-
-    // On capture uniquement le formulaire
-    const canvas = await html2canvas(element, { scale: 2, backgroundColor: '#ffffff' });
-    const imgData = canvas.toDataURL('image/png');
-
-    const pdf = new jsPDF('p', 'mm', 'a4');
-    const pdfWidth = pdf.internal.pageSize.getWidth();
-    const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-
-    let position = 0;
-    let heightLeft = pdfHeight;
-
-    pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, pdfHeight);
-    heightLeft -= pdf.internal.pageSize.getHeight();
-
-    while (heightLeft > 0) {
+document.getElementById('downloadPDF').addEventListener('click', async function() {
+  const { jsPDF } = window.jspdf;
+  const pdf = new jsPDF('p', 'mm', 'a4');
+  
+  // Récupérer tous les fieldset du formulaire
+  const fieldsets = document.querySelectorAll('#contrat-velo fieldset');
+  
+  let isFirstPage = true;
+  
+  for (const fieldset of fieldsets) {
+    // Capturer chaque section individuellement
+    const canvas = await html2canvas(fieldset, {
+      scale: 2,
+      backgroundColor: '#ffffff',
+      useCORS: true
+    });
+    
+    const imgData = canvas.toDataURL('image/jpeg', 0.95);
+    const imgWidth = pdf.internal.pageSize.getWidth() - 20;
+    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+    
+    if (!isFirstPage) {
       pdf.addPage();
-      position = -pdf.internal.pageSize.getHeight();
-      pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, pdfHeight);
-      heightLeft -= pdf.internal.pageSize.getHeight();
     }
-
-    pdf.save('contrat-velo-signe.pdf');
-  });
-
-  // Pré-remplir avec les paramètres GET (si présents)
-  const params = new URLSearchParams(window.location.search);
-  params.forEach((value, key) => {
-    const field = document.querySelector(`[name="${key}"]`);
-    if (field) field.value = value;
-  });
+    
+    pdf.addImage(imgData, 'JPEG', 10, 10, imgWidth, imgHeight);
+    isFirstPage = false;
+  }
+  
+  pdf.save('contrat-velo-signe.pdf');
+});
 </script>
 </body>
 </html>
