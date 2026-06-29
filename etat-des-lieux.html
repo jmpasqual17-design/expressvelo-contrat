@@ -771,7 +771,55 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-
+  // ==========================================================
+// ENVOI VIA FORMSPREE (avec pièce jointe)
+// ==========================================================
+async function sendWithFormspree(pdfDataUrl, data) {
+  const FORMSPREE_URL = 'https://formspree.io/f/mqevlgky';
+  
+  try {
+    showToast('📧 Envoi via Formspree...', 'info');
+    
+    // Convertir le PDF en fichier
+    const response = await fetch(pdfDataUrl);
+    const blob = await response.blob();
+    const file = new File([blob], `etat-lieux-${data.renterName}.pdf`, { type: 'application/pdf' });
+    
+    // Créer le FormData
+    const formData = new FormData();
+    formData.append('_subject', `État des lieux - ${data.ownerName} & ${data.renterName}`);
+    formData.append('_replyto', data.ownerEmail);
+    formData.append('_cc', data.renterEmail); // Copie au locataire
+    
+    // Ajouter les données
+    formData.append('proprietaire', data.ownerName || '');
+    formData.append('locataire', data.renterName || '');
+    formData.append('velo', data.bikeModel || '');
+    formData.append('debut', data.startDate || '');
+    formData.append('fin', data.endDate || '');
+    formData.append('observations', data.generalNotes || '');
+    
+    // Ajouter la pièce jointe
+    formData.append('attachment', file);
+    
+    // Envoyer
+    const uploadResponse = await fetch(FORMSPREE_URL, {
+      method: 'POST',
+      body: formData
+    });
+    
+    if (uploadResponse.ok) {
+      showToast('✅ Contrat envoyé avec succès !', 'success');
+      return true;
+    } else {
+      throw new Error(`Erreur ${uploadResponse.status}`);
+    }
+  } catch (error) {
+    console.error('❌ Erreur:', error);
+    showToast('❌ ' + error.message, 'error');
+    return false;
+  }
+}
 <script>
   (function() {
     'use strict';
@@ -1338,5 +1386,6 @@
 
   })();
 </script>
+
 </body>
 </html>
