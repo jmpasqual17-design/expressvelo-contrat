@@ -1231,6 +1231,9 @@
  // ==========================================================
 // 7. ENVOI VIA EMAILJS (avec lien de téléchargement)
 // ==========================================================
+// ==========================================================
+// 7. ENVOI VIA EMAILJS (avec hébergement externe du PDF)
+// ==========================================================
 async function sendWithEmailJS(data, pdfDataUrl) {
   try {
     showToast('📧 Envoi du contrat...', 'info');
@@ -1253,17 +1256,35 @@ async function sendWithEmailJS(data, pdfDataUrl) {
       }
     });
 
-    // 2. Générer le lien de téléchargement du PDF
-    // Le PDF est déjà généré en dataURL, on le passe directement
-    const downloadLink = pdfDataUrl;
+    // 2. Envoyer le PDF vers un hébergeur gratuit
+    showToast('📤 Téléchargement du PDF...', 'info');
+    
+    // Convertir le dataURL en Blob
+    const pdfResponse = await fetch(pdfDataUrl);
+    const pdfBlob = await pdfResponse.blob();
+    
+    // Créer un FormData pour l'upload
+    const uploadData = new FormData();
+    uploadData.append('file', pdfBlob, 'etat-lieux.pdf');
 
-    // 3. Préparer les données du template (SANS pièce jointe)
+    // Upload sur tmpfiles.org (gratuit, sans compte)
+    const uploadResponse = await fetch('https://tmpfiles.org/api/v1/upload', {
+      method: 'POST',
+      body: uploadData
+    });
+
+    if (!uploadResponse.ok) {
+      throw new Error('Erreur upload PDF');
+    }
+
+    const uploadResult = await uploadResponse.json();
+    const downloadUrl = uploadResult.data.url;
+
+    // 3. Préparer les données du template EmailJS (avec lien de téléchargement)
     const templateParams = {
-      // Destinataires
       to_email: data.ownerEmail || '',
       cc_email: data.renterEmail || '',
       
-      // Informations
       proprietaire: data.ownerName || '',
       proprietaire_email: data.ownerEmail || '',
       locataire: data.renterName || '',
@@ -1276,11 +1297,12 @@ async function sendWithEmailJS(data, pdfDataUrl) {
       date_signature: new Date().toLocaleDateString('fr-FR'),
       controle_velo: bikeReport || 'Aucun contrôle effectué',
       
-      // Lien de téléchargement du PDF
-      lien_pdf: `📎 Téléchargez l'état des lieux complet ici : ${downloadLink}`
+      // Lien de téléchargement du PDF (hébergé sur tmpfiles.org)
+      lien_pdf: `📎 Téléchargez l'état des lieux complet ici : ${downloadUrl}`
     };
 
-    // 4. Envoyer avec EmailJS
+    // 4. Envoyer l'email avec EmailJS
+    showToast('📧 Envoi de l\'email...', 'info');
     const response = await emailjs.send(
       EMAILJS_CONFIG.serviceID,
       EMAILJS_CONFIG.templateID,
@@ -1298,6 +1320,8 @@ async function sendWithEmailJS(data, pdfDataUrl) {
     console.error('❌ Erreur EmailJS:', error);
     showToast('❌ Erreur: ' + error.message, 'error');
     return false;
+  }
+}
     
     }
   }
