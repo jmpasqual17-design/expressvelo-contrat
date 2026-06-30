@@ -1226,105 +1226,90 @@
   }
 
   // ==========================================================
-  // 7. ENVOI VIA EMAILJS
+  // 7. ENVOI VIA EMAILJS (avec hébergement externe du PDF)
   // ==========================================================
- // ==========================================================
-// 7. ENVOI VIA EMAILJS (avec lien de téléchargement)
-// ==========================================================
-// ==========================================================
-// 7. ENVOI VIA EMAILJS (avec hébergement externe du PDF)
-// ==========================================================
-// ==========================================================
-// 7. ENVOI VIA EMAILJS (avec hébergement externe)
-// ==========================================================
-// ==========================================================
-// 7. ENVOI VIA EMAILJS (avec hébergement externe)
-// ==========================================================
-async function sendWithEmailJS(data, pdfDataUrl) {
-  try {
-    showToast('📤 Upload du PDF...', 'info');
+  async function sendWithEmailJS(data, pdfDataUrl) {
+    try {
+      showToast('📤 Upload du PDF...', 'info');
 
-    // 1. Convertir le dataURL en Blob
-    const pdfResponse = await fetch(pdfDataUrl);
-    const pdfBlob = await pdfResponse.blob();
+      // 1. Convertir le dataURL en Blob
+      const pdfResponse = await fetch(pdfDataUrl);
+      const pdfBlob = await pdfResponse.blob();
 
-    // 2. Upload sur tmpfiles.org (gratuit, sans compte, 1GB max)
-    const formData = new FormData();
-    formData.append('file', pdfBlob, 'etat-lieux.pdf');
+      // 2. Upload sur tmpfiles.org (gratuit, sans compte, 1GB max)
+      const formData = new FormData();
+      formData.append('file', pdfBlob, 'etat-lieux.pdf');
 
-    const uploadResponse = await fetch('https://tmpfiles.org/api/v1/upload', {
-      method: 'POST',
-      body: formData
-    });
+      const uploadResponse = await fetch('https://tmpfiles.org/api/v1/upload', {
+        method: 'POST',
+        body: formData
+      });
 
-    if (!uploadResponse.ok) {
-      throw new Error('Erreur upload PDF');
-    }
-
-    const uploadResult = await uploadResponse.json();
-    const downloadUrl = uploadResult.data.url;
-
-    // 3. Construire le rapport des contrôles vélo
-    const bikeParts = ['frame', 'handlebar', 'seat', 'fork', 'wheel_front', 'wheel_rear', 
-                       'tire_front', 'tire_rear', 'brakes', 'transmission', 'chain', 'pedals'];
-    const partNames = {
-      'frame': 'Cadre', 'handlebar': 'Guidon', 'seat': 'Selle', 'fork': 'Fourche',
-      'wheel_front': 'Roue Avant', 'wheel_rear': 'Roue Arrière',
-      'tire_front': 'Pneu Avant', 'tire_rear': 'Pneu Arrière',
-      'brakes': 'Freins', 'transmission': 'Transmission', 'chain': 'Chaîne', 'pedals': 'Pédales'
-    };
-    let bikeReport = '';
-    bikeParts.forEach(part => {
-      const state = data[`state_${part}`] || '';
-      const note = data[`note_${part}`] || '';
-      if (state || note) {
-        bikeReport += `${partNames[part] || part}: ${state || 'Non spécifié'}${note ? ' ('+note+')' : ''}\n`;
+      if (!uploadResponse.ok) {
+        throw new Error('Erreur upload PDF');
       }
-    });
 
-    // 4. Préparer les données du template (texte uniquement)
-    const templateParams = {
-      to_email: data.ownerEmail || '',
-      cc_email: data.renterEmail || '',
-      
-      proprietaire: data.ownerName || '',
-      proprietaire_email: data.ownerEmail || '',
-      locataire: data.renterName || '',
-      locataire_email: data.renterEmail || '',
-      velo: data.bikeModel || '',
-      debut: data.startDate || '',
-      fin: data.endDate || '',
-      observations: data.generalNotes || 'Aucune',
-      accessoires: (data.extras || []).join(', ') || 'Aucun',
-      date_signature: new Date().toLocaleDateString('fr-FR'),
-      controle_velo: bikeReport || 'Aucun contrôle effectué',
-      
-      // Lien de téléchargement
-      lien_pdf: downloadUrl
-    };
+      const uploadResult = await uploadResponse.json();
+      const downloadUrl = uploadResult.data.url;
 
-    // 5. Envoyer l'email avec EmailJS (uniquement du texte)
-    showToast('📧 Envoi de l\'email...', 'info');
-    const response = await emailjs.send(
-      EMAILJS_CONFIG.serviceID,
-      EMAILJS_CONFIG.templateID,
-      templateParams
-    );
+      // 3. Construire le rapport des contrôles vélo (texte uniquement)
+      const bikeParts = ['frame', 'handlebar', 'seat', 'fork', 'wheel_front', 'wheel_rear', 
+                         'tire_front', 'tire_rear', 'brakes', 'transmission', 'chain', 'pedals'];
+      const partNames = {
+        'frame': 'Cadre', 'handlebar': 'Guidon', 'seat': 'Selle', 'fork': 'Fourche',
+        'wheel_front': 'Roue Avant', 'wheel_rear': 'Roue Arrière',
+        'tire_front': 'Pneu Avant', 'tire_rear': 'Pneu Arrière',
+        'brakes': 'Freins', 'transmission': 'Transmission', 'chain': 'Chaîne', 'pedals': 'Pédales'
+      };
+      let bikeReport = '';
+      bikeParts.forEach(part => {
+        const state = data[`state_${part}`] || '';
+        const note = data[`note_${part}`] || '';
+        if (state || note) {
+          bikeReport += `${partNames[part] || part}: ${state || 'Non spécifié'}${note ? ' ('+note+')' : ''}\n`;
+        }
+      });
 
-    if (response.status === 200) {
-      showToast('✅ Contrat envoyé aux deux parties !', 'success');
-      return true;
-    } else {
-      throw new Error(`Erreur ${response.status}`);
-    }
+      // 4. Préparer les données du template (texte uniquement)
+      const templateParams = {
+        to_email: data.ownerEmail || '',
+        cc_email: data.renterEmail || '',
+        
+        proprietaire: data.ownerName || '',
+        proprietaire_email: data.ownerEmail || '',
+        locataire: data.renterName || '',
+        locataire_email: data.renterEmail || '',
+        velo: data.bikeModel || '',
+        debut: data.startDate || '',
+        fin: data.endDate || '',
+        observations: data.generalNotes || 'Aucune',
+        accessoires: (data.extras || []).join(', ') || 'Aucun',
+        date_signature: new Date().toLocaleDateString('fr-FR'),
+        controle_velo: bikeReport || 'Aucun contrôle effectué',
+        
+        // Lien de téléchargement (texte uniquement)
+        lien_pdf: downloadUrl
+      };
 
-  } catch (error) {
-    console.error('❌ Erreur:', error);
-    showToast('❌ Erreur: ' + error.message, 'error');
-    return false;
-  }
-}
-    
+      // 5. Envoyer l'email avec EmailJS (uniquement du texte)
+      showToast('📧 Envoi de l\'email...', 'info');
+      const response = await emailjs.send(
+        EMAILJS_CONFIG.serviceID,
+        EMAILJS_CONFIG.templateID,
+        templateParams
+      );
+
+      if (response.status === 200) {
+        showToast('✅ Contrat envoyé aux deux parties !', 'success');
+        return true;
+      } else {
+        throw new Error(`Erreur ${response.status}`);
+      }
+
+    } catch (error) {
+      console.error('❌ Erreur:', error);
+      showToast('❌ Erreur: ' + error.message, 'error');
+      return false;
     }
   }
 
