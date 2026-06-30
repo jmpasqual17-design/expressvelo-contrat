@@ -188,7 +188,7 @@
     }
     .field textarea { min-height: 80px; resize: vertical; }
 
-    /* Partie contrôle du vélo - style amélioré */
+    /* Partie contrôle du vélo */
     .bike-part-item {
       display: flex;
       flex-direction: column;
@@ -628,7 +628,7 @@
         </div>
       </div>
 
-      <!-- SECTION 3 : CONTRÔLE DU VÉLO (NOUVEAU) -->
+      <!-- SECTION 3 : CONTRÔLE DU VÉLO -->
       <div class="section">
         <div class="section-title"><span class="step">3</span>Contrôle du vélo</div>
         <div class="grid-3" id="bikePartsContainer">
@@ -783,7 +783,7 @@
             </div>
           </div>
 
-          <!-- Dérailleur / Transmission -->
+          <!-- Transmission -->
           <div class="bike-part-item">
             <div class="part-header"><span class="icon">⚙️</span> Transmission</div>
             <div class="part-controls">
@@ -939,21 +939,29 @@
 <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.5/dist/signature_pad.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 
 <script>
-  
   // ==========================================================
-  // CODE JAVASCRIPT COMPLET ET FONCTIONNEL
+  // CODE JAVASCRIPT COMPLET - VERSION EMAILJS
   // ==========================================================
   
   'use strict';
-// Configuration EmailJS (à ajouter en début de script)
-const EMAILJS_CONFIG = {
-  publicKey: 'zz4KdlO2Xyw0Y5Gej',
-  serviceID: 'service_g1ip1lt',
-  templateID: 'template_sozwa7c'
-};
-emailjs.init({ publicKey: EMAILJS_CONFIG.publicKey });
+
+  // ==========================================================
+  // CONFIGURATION EMAILJS
+  // ==========================================================
+  const EMAILJS_CONFIG = {
+    publicKey: 'zz4KdlO2Xyw0Y5Gej',
+    serviceID: 'service_g1ip1lt',
+    templateID: 'template_sozwa7c'
+  };
+
+  // Initialiser EmailJS
+  emailjs.init({
+    publicKey: EMAILJS_CONFIG.publicKey
+  });
+
   // ==========================================================
   // 1. DATE ACTUELLE
   // ==========================================================
@@ -1032,7 +1040,6 @@ emailjs.init({ publicKey: EMAILJS_CONFIG.publicKey });
     });
   }
 
-  // Upload des photos
   photosInput.addEventListener('change', async (e) => {
     const files = Array.from(e.target.files);
     if (photosDataUrls.length + files.length > 6) {
@@ -1050,7 +1057,6 @@ emailjs.init({ publicKey: EMAILJS_CONFIG.publicKey });
     photosInput.value = '';
   });
 
-  // Drag & Drop
   const dropZone = document.getElementById('photoDropZone');
   dropZone.addEventListener('click', () => photosInput.click());
 
@@ -1220,79 +1226,79 @@ emailjs.init({ publicKey: EMAILJS_CONFIG.publicKey });
   }
 
   // ==========================================================
-  // 7. ENVOI VIA EMAILJS (ou Proforms - tu gardes ce que tu veux)
+  // 7. ENVOI VIA EMAILJS
   // ==========================================================
-  async function sendWithProforms(data, pdfDataUrl) {
+  async function sendWithEmailJS(data, pdfDataUrl) {
     try {
       showToast('📧 Envoi du contrat...', 'info');
 
-      const formData = new FormData();
+      // 1. Récupérer le PDF en base64
+      const pdfResponse = await fetch(pdfDataUrl);
+      const pdfBlob = await pdfResponse.blob();
+      
+      const reader = new FileReader();
+      const pdfBase64 = await new Promise((resolve) => {
+        reader.onload = () => resolve(reader.result);
+        reader.readAsDataURL(pdfBlob);
+      });
 
-      // Informations principales
-      formData.append('proprietaire', data.ownerName || '');
-      formData.append('proprietaire_email', data.ownerEmail || '');
-      formData.append('locataire', data.renterName || '');
-      formData.append('locataire_email', data.renterEmail || '');
-      formData.append('velo', data.bikeModel || '');
-      formData.append('debut', data.startDate || '');
-      formData.append('fin', data.endDate || '');
-      formData.append('observations', data.generalNotes || '');
-      formData.append('accessoires', (data.extras || []).join(', '));
-      formData.append('date_signature', new Date().toLocaleDateString('fr-FR'));
-
-      // Ajouter les contrôles du vélo
+      // 2. Construire le rapport des contrôles vélo
       const bikeParts = ['frame', 'handlebar', 'seat', 'fork', 'wheel_front', 'wheel_rear', 
                          'tire_front', 'tire_rear', 'brakes', 'transmission', 'chain', 'pedals'];
+      const partNames = {
+        'frame': 'Cadre', 'handlebar': 'Guidon', 'seat': 'Selle', 'fork': 'Fourche',
+        'wheel_front': 'Roue Avant', 'wheel_rear': 'Roue Arrière',
+        'tire_front': 'Pneu Avant', 'tire_rear': 'Pneu Arrière',
+        'brakes': 'Freins', 'transmission': 'Transmission', 'chain': 'Chaîne', 'pedals': 'Pédales'
+      };
       let bikeReport = '';
       bikeParts.forEach(part => {
         const state = data[`state_${part}`] || '';
         const note = data[`note_${part}`] || '';
-        const partNames = {
-          'frame': 'Cadre', 'handlebar': 'Guidon', 'seat': 'Selle', 'fork': 'Fourche',
-          'wheel_front': 'Roue Avant', 'wheel_rear': 'Roue Arrière',
-          'tire_front': 'Pneu Avant', 'tire_rear': 'Pneu Arrière',
-          'brakes': 'Freins', 'transmission': 'Transmission', 'chain': 'Chaîne', 'pedals': 'Pédales'
-        };
         if (state || note) {
           bikeReport += `${partNames[part] || part}: ${state || 'Non spécifié'}${note ? ' ('+note+')' : ''}\n`;
         }
       });
-      formData.append('controle_velo', bikeReport || 'Aucun contrôle effectué');
 
-      // PDF
-      const pdfResponse = await fetch(pdfDataUrl);
-      const pdfBlob = await pdfResponse.blob();
-      formData.append('etat-lieux.pdf', pdfBlob, 'etat-lieux.pdf');
+      // 3. Préparer les données du template
+      const templateParams = {
+        // Destinataires
+        to_email: data.ownerEmail || '',
+        cc_email: data.renterEmail || '',
+        
+        // Informations
+        proprietaire: data.ownerName || '',
+        proprietaire_email: data.ownerEmail || '',
+        locataire: data.renterName || '',
+        locataire_email: data.renterEmail || '',
+        velo: data.bikeModel || '',
+        debut: data.startDate || '',
+        fin: data.endDate || '',
+        observations: data.generalNotes || 'Aucune',
+        accessoires: (data.extras || []).join(', ') || 'Aucun',
+        date_signature: new Date().toLocaleDateString('fr-FR'),
+        controle_velo: bikeReport || 'Aucun contrôle effectué',
+        
+        // Pièce jointe
+        attachment: pdfBase64
+      };
 
-      // Photos
-      if (data.photos && data.photos.length > 0) {
-        for (let i = 0; i < Math.min(data.photos.length, 3); i++) {
-          try {
-            const photoResponse = await fetch(data.photos[i]);
-            const photoBlob = await photoResponse.blob();
-            formData.append(`photo_${i+1}.jpg`, photoBlob, `photo_${i+1}.jpg`);
-          } catch (err) {
-            console.error('Erreur ajout photo:', err);
-          }
-        }
-      }
+      // 4. Envoyer avec EmailJS
+      const response = await emailjs.send(
+        EMAILJS_CONFIG.serviceID,
+        EMAILJS_CONFIG.templateID,
+        templateParams
+      );
 
-      const response = await fetch('https://proforms.top/api/pr0ef03387', {
-        method: 'POST',
-        body: formData
-      });
-
-      if (response.ok) {
-        showToast('✅ Contrat envoyé avec succès aux deux parties !', 'success');
+      if (response.status === 200) {
+        showToast('✅ Contrat envoyé aux deux parties !', 'success');
         return true;
       } else {
-        const errorText = await response.text();
-        console.error('❌ Erreur Proforms:', errorText);
         throw new Error(`Erreur ${response.status}`);
       }
 
     } catch (error) {
-      console.error('❌ Erreur Proforms:', error);
+      console.error('❌ Erreur EmailJS:', error);
       showToast('❌ Erreur: ' + error.message, 'error');
       return false;
     }
@@ -1324,7 +1330,7 @@ emailjs.init({ publicKey: EMAILJS_CONFIG.publicKey });
       const container = document.getElementById('contractContainer');
       const pdfDataUrl = await generatePdf(container, data.photos || []);
 
-      await sendWithProforms(data, pdfDataUrl);
+      await sendWithEmailJS(data, pdfDataUrl);
 
     } catch (error) {
       console.error('❌ Erreur:', error);
@@ -1461,6 +1467,7 @@ emailjs.init({ publicKey: EMAILJS_CONFIG.publicKey });
   // 14. INITIALISATION
   // ==========================================================
   updateSignatureStatus();
+  console.log('🚀 Application prête avec EmailJS !');
 
 </script>
 </body>
