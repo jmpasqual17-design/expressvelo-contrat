@@ -1228,49 +1228,14 @@
    // ==========================================================
   // 7. ENVOI VIA EMAILJS (avec hébergement externe du PDF)
   // ==========================================================
-    // ==========================================================
-  // 7. ENVOI VIA EMAILJS (avec File.io - API corrigée)
+   // ==========================================================
+  // 7. ENVOI VIA EMAILJS (sans upload externe)
   // ==========================================================
   async function sendWithEmailJS(data, pdfDataUrl) {
     try {
-      showToast('📤 Upload du PDF...', 'info');
+      showToast('📧 Préparation de l\'email...', 'info');
 
-      // 1. Convertir le dataURL en Blob
-      const pdfResponse = await fetch(pdfDataUrl);
-      const pdfBlob = await pdfResponse.blob();
-
-      // 2. Upload sur File.io (API v2 - CORS OK)
-      const formData = new FormData();
-      formData.append('file', pdfBlob);
-
-      const uploadResponse = await fetch('https://file.io/', {
-        method: 'POST',
-        body: formData,
-        headers: {
-          'Accept': 'application/json'
-        }
-      });
-
-      // Lire la réponse même si elle n'est pas OK
-      const responseText = await uploadResponse.text();
-      let uploadResult;
-      
-      try {
-        uploadResult = JSON.parse(responseText);
-      } catch (e) {
-        console.error('Réponse non JSON:', responseText);
-        throw new Error('Erreur de réponse du serveur');
-      }
-
-      if (!uploadResult.success) {
-        throw new Error('Upload échoué: ' + (uploadResult.message || 'Erreur inconnue'));
-      }
-      
-      const downloadUrl = uploadResult.link;
-
-      console.log('📎 Lien de téléchargement :', downloadUrl);
-
-      // 3. Construire le rapport des contrôles vélo
+      // 1. Construire le rapport des contrôles vélo
       const bikeParts = ['frame', 'handlebar', 'seat', 'fork', 'wheel_front', 'wheel_rear', 
                          'tire_front', 'tire_rear', 'brakes', 'transmission', 'chain', 'pedals'];
       const partNames = {
@@ -1288,7 +1253,11 @@
         }
       });
 
-      // 4. Préparer les données du template
+      // 2. Créer un lien de téléchargement local (valable dans la session)
+      // Le lien ne fonctionne QUE si l'application est encore ouverte
+      const downloadLink = window.location.href + '?pdf=' + encodeURIComponent(pdfDataUrl);
+
+      // 3. Préparer les données du template
       const templateParams = {
         to_email: data.ownerEmail || '',
         cc_email: data.renterEmail || '',
@@ -1305,10 +1274,11 @@
         date_signature: new Date().toLocaleDateString('fr-FR'),
         controle_velo: bikeReport || 'Aucun contrôle effectué',
         
-        lien_pdf: downloadUrl
+        // Message d'instruction pour télécharger le PDF
+        instruction_pdf: '📄 Ouvrez l\'application et cliquez sur "Télécharger PDF" pour récupérer le document.'
       };
 
-      // 5. Envoyer l'email avec EmailJS
+      // 4. Envoyer l'email avec EmailJS
       showToast('📧 Envoi de l\'email...', 'info');
       const response = await emailjs.send(
         EMAILJS_CONFIG.serviceID,
