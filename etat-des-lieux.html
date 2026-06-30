@@ -1229,7 +1229,7 @@
   // 7. ENVOI VIA EMAILJS (avec hébergement externe du PDF)
   // ==========================================================
     // ==========================================================
-  // 7. ENVOI VIA EMAILJS (avec GoFile.io - CORS OK)
+  // 7. ENVOI VIA EMAILJS (avec File.io - API corrigée)
   // ==========================================================
   async function sendWithEmailJS(data, pdfDataUrl) {
     try {
@@ -1239,28 +1239,34 @@
       const pdfResponse = await fetch(pdfDataUrl);
       const pdfBlob = await pdfResponse.blob();
 
-      // 2. Upload sur GoFile.io (gratuit, CORS OK, 10GB max)
+      // 2. Upload sur File.io (API v2 - CORS OK)
       const formData = new FormData();
       formData.append('file', pdfBlob);
 
-      const uploadResponse = await fetch('https://store1.gofile.io/uploadFile', {
+      const uploadResponse = await fetch('https://file.io/', {
         method: 'POST',
-        body: formData
+        body: formData,
+        headers: {
+          'Accept': 'application/json'
+        }
       });
 
-      if (!uploadResponse.ok) {
-        const errorText = await uploadResponse.text();
-        console.error('Erreur GoFile.io:', errorText);
-        throw new Error(`Erreur upload (${uploadResponse.status})`);
+      // Lire la réponse même si elle n'est pas OK
+      const responseText = await uploadResponse.text();
+      let uploadResult;
+      
+      try {
+        uploadResult = JSON.parse(responseText);
+      } catch (e) {
+        console.error('Réponse non JSON:', responseText);
+        throw new Error('Erreur de réponse du serveur');
       }
 
-      const uploadResult = await uploadResponse.json();
-      
-      if (uploadResult.status !== 'ok') {
-        throw new Error('Upload échoué: ' + (uploadResult.message || ''));
+      if (!uploadResult.success) {
+        throw new Error('Upload échoué: ' + (uploadResult.message || 'Erreur inconnue'));
       }
       
-      const downloadUrl = `https://gofile.io/d/${uploadResult.data.fileId}`;
+      const downloadUrl = uploadResult.link;
 
       console.log('📎 Lien de téléchargement :', downloadUrl);
 
