@@ -1225,11 +1225,11 @@
     }
   }
 
-  // ==========================================================
+   // ==========================================================
   // 7. ENVOI VIA EMAILJS (avec hébergement externe du PDF)
   // ==========================================================
    // ==========================================================
-  // 7. ENVOI VIA EMAILJS (avec hébergement externe du PDF)
+  // 7. ENVOI VIA EMAILJS (avec Pixeldrain)
   // ==========================================================
   async function sendWithEmailJS(data, pdfDataUrl) {
     try {
@@ -1239,25 +1239,25 @@
       const pdfResponse = await fetch(pdfDataUrl);
       const pdfBlob = await pdfResponse.blob();
 
-      // 2. Upload sur tmpfiles.org (gratuit, sans compte, 1GB max)
-      const formData = new FormData();
-      formData.append('file', pdfBlob, 'etat-lieux.pdf');
-
-      const uploadResponse = await fetch('https://tmpfiles.org/api/v1/upload', {
+      // 2. Upload sur Pixeldrain (gratuit, 10GB max, CORS OK)
+      const uploadResponse = await fetch('https://pixeldrain.com/api/file/', {
         method: 'POST',
-        body: formData
+        body: pdfBlob,
+        headers: { 'Content-Type': 'application/pdf' }
       });
 
       if (!uploadResponse.ok) {
-        throw new Error('Erreur upload PDF sur tmpfiles.org');
+        const errorText = await uploadResponse.text();
+        console.error('Erreur Pixeldrain:', errorText);
+        throw new Error(`Erreur upload PDF sur Pixeldrain (${uploadResponse.status})`);
       }
 
       const uploadResult = await uploadResponse.json();
-      const downloadUrl = uploadResult.data.url;
+      const downloadUrl = `https://pixeldrain.com/u/${uploadResult.id}`;
 
       console.log('📎 Lien de téléchargement :', downloadUrl);
 
-      // 3. Construire le rapport des contrôles vélo (texte uniquement)
+      // 3. Construire le rapport des contrôles vélo
       const bikeParts = ['frame', 'handlebar', 'seat', 'fork', 'wheel_front', 'wheel_rear', 
                          'tire_front', 'tire_rear', 'brakes', 'transmission', 'chain', 'pedals'];
       const partNames = {
@@ -1275,7 +1275,7 @@
         }
       });
 
-      // 4. Préparer les données du template (texte uniquement)
+      // 4. Préparer les données du template
       const templateParams = {
         to_email: data.ownerEmail || '',
         cc_email: data.renterEmail || '',
@@ -1292,11 +1292,10 @@
         date_signature: new Date().toLocaleDateString('fr-FR'),
         controle_velo: bikeReport || 'Aucun contrôle effectué',
         
-        // Lien de téléchargement (texte uniquement)
         lien_pdf: downloadUrl
       };
 
-      // 5. Envoyer l'email avec EmailJS (uniquement du texte)
+      // 5. Envoyer l'email avec EmailJS
       showToast('📧 Envoi de l\'email...', 'info');
       const response = await emailjs.send(
         EMAILJS_CONFIG.serviceID,
