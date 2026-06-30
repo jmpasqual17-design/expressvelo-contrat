@@ -941,12 +941,19 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 <script>
+  
   // ==========================================================
   // CODE JAVASCRIPT COMPLET ET FONCTIONNEL
   // ==========================================================
   
   'use strict';
-
+// Configuration EmailJS (à ajouter en début de script)
+const EMAILJS_CONFIG = {
+  publicKey: 'zz4KdlO2Xyw0Y5Gej',
+  serviceID: 'service_g1ip1lt',
+  templateID: 'template_sozwa7c'
+};
+emailjs.init({ publicKey: EMAILJS_CONFIG.publicKey });
   // ==========================================================
   // 1. DATE ACTUELLE
   // ==========================================================
