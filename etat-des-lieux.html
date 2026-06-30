@@ -1229,7 +1229,7 @@
   // 7. ENVOI VIA EMAILJS (avec hébergement externe du PDF)
   // ==========================================================
   // ==========================================================
-  // 7. ENVOI VIA EMAILJS (avec hébergement externe)
+  // 7. ENVOI VIA EMAILJS (avec GoFile.io - CORS OK)
   // ==========================================================
   async function sendWithEmailJS(data, pdfDataUrl) {
     try {
@@ -1239,29 +1239,28 @@
       const pdfResponse = await fetch(pdfDataUrl);
       const pdfBlob = await pdfResponse.blob();
 
-      // 2. Upload sur File.io (gratuit, 100MB max)
-      // Attention : le fichier est supprimé après le 1er téléchargement
+      // 2. Upload sur GoFile.io (gratuit, CORS OK)
       const formData = new FormData();
-      formData.append('file', pdfBlob, 'etat-lieux.pdf');
+      formData.append('file', pdfBlob);
 
-      const uploadResponse = await fetch('https://file.io/', {
+      const uploadResponse = await fetch('https://store1.gofile.io/uploadFile', {
         method: 'POST',
         body: formData
       });
 
       if (!uploadResponse.ok) {
         const errorText = await uploadResponse.text();
-        console.error('Erreur File.io:', errorText);
+        console.error('Erreur GoFile.io:', errorText);
         throw new Error(`Erreur upload (${uploadResponse.status})`);
       }
 
       const uploadResult = await uploadResponse.json();
       
-      if (!uploadResult.success) {
+      if (uploadResult.status !== 'ok') {
         throw new Error('Upload échoué: ' + (uploadResult.message || ''));
       }
       
-      const downloadUrl = uploadResult.link;
+      const downloadUrl = `https://gofile.io/d/${uploadResult.data.fileId}`;
 
       console.log('📎 Lien de téléchargement :', downloadUrl);
 
