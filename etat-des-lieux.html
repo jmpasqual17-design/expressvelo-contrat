@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>État des lieux - ExpressVélo</title>
+  <title>État des lieux de départ</title>
 
   <style>
     /* ============================================================
@@ -951,79 +951,70 @@
     }
   }
 
-  // ==========================================================
-  // 7. ENVOI VIA FORMSPREE
-  // ==========================================================
-  async function sendWithFormspree(pdfDataUrl, data) {
-    try {
-      showToast('📧 Envoi via Formspree...', 'info');
-      
-      // Convertir le PDF en fichier
-      const response = await fetch(pdfDataUrl);
-      const blob = await response.blob();
-      
-      const file = new File([blob], `etat-lieux-${data.renterName || 'location'}.pdf`, { 
-        type: 'application/pdf' 
-      });
-      
-      // Créer le FormData
-      const formData = new FormData();
-      formData.append('_subject', `État des lieux - ${data.ownerName || 'Propriétaire'} & ${data.renterName || 'Locataire'}`);
-      formData.append('_replyto', data.ownerEmail);
-      formData.append('_cc', data.renterEmail);
-      
-      formData.append('proprietaire', data.ownerName || '');
-      formData.append('proprietaire_email', data.ownerEmail || '');
-      formData.append('locataire', data.renterName || '');
-      formData.append('locataire_email', data.renterEmail || '');
-      formData.append('velo', data.bikeModel || '');
-      formData.append('debut', data.startDate || '');
-      formData.append('fin', data.endDate || '');
-      formData.append('observations', data.generalNotes || '');
-      formData.append('date_signature', new Date().toLocaleDateString('fr-FR'));
-      
-      if (data.extras && data.extras.length > 0) {
-        formData.append('accessoires', data.extras.join(', '));
-      }
-      
-      // Ajouter la pièce jointe PDF
-      formData.append('attachment', file);
-      
-      // Ajouter les photos (jusqu'à 3)
-      if (data.photos && data.photos.length > 0) {
-        for (let i = 0; i < Math.min(data.photos.length, 3); i++) {
-          try {
-            const photoResponse = await fetch(data.photos[i]);
-            const photoBlob = await photoResponse.blob();
-            const photoFile = new File([photoBlob], `photo_${i+1}.jpg`, { type: 'image/jpeg' });
-            formData.append(`photo_${i+1}`, photoFile);
-          } catch (err) {
-            console.error('Erreur ajout photo:', err);
-          }
+// ==========================================================
+// 7. ENVOI VIA PROFORMS
+// ==========================================================
+async function sendWithProforms(data, pdfDataUrl) {
+  try {
+    showToast('📧 Envoi du contrat...', 'info');
+
+    // 1. Préparer les données du formulaire
+    const formData = new FormData();
+
+    // 2. Ajouter toutes les informations textuelles
+    formData.append('proprietaire', data.ownerName || '');
+    formData.append('proprietaire_email', data.ownerEmail || '');
+    formData.append('locataire', data.renterName || '');
+    formData.append('locataire_email', data.renterEmail || '');
+    formData.append('velo', data.bikeModel || '');
+    formData.append('debut', data.startDate || '');
+    formData.append('fin', data.endDate || '');
+    formData.append('observations', data.generalNotes || '');
+    formData.append('accessoires', (data.extras || []).join(', '));
+    formData.append('date_signature', new Date().toLocaleDateString('fr-FR'));
+
+    // 3. Ajouter le PDF en pièce jointe
+    const pdfResponse = await fetch(pdfDataUrl);
+    const pdfBlob = await pdfResponse.blob();
+    formData.append('etat-lieux.pdf', pdfBlob, 'etat-lieux.pdf');
+
+    // 4. Ajouter les photos (optionnel - jusqu'à 3)
+    if (data.photos && data.photos.length > 0) {
+      for (let i = 0; i < Math.min(data.photos.length, 3); i++) {
+        try {
+          const photoResponse = await fetch(data.photos[i]);
+          const photoBlob = await photoResponse.blob();
+          formData.append(`photo_${i+1}.jpg`, photoBlob, `photo_${i+1}.jpg`);
+        } catch (err) {
+          console.error('Erreur ajout photo:', err);
         }
       }
-      
-      // Envoyer
-      const uploadResponse = await fetch(FORMSPREE_URL, {
-        method: 'POST',
-        body: formData
-      });
-      
-      if (uploadResponse.ok) {
-        showToast('✅ Contrat envoyé avec succès aux deux parties !', 'success');
-        return true;
-      } else {
-        const errorText = await uploadResponse.text();
-        console.error('❌ Erreur Formspree:', errorText);
-        throw new Error(`Erreur ${uploadResponse.status}`);
-      }
-      
-    } catch (error) {
-      console.error('❌ Erreur Formspree:', error);
-      showToast('❌ Erreur: ' + error.message, 'error');
-      return false;
     }
+
+    // 5. Envoyer à Proforms
+    // ⚠️ REMPLACE TON_ENDPOINT_PROFORMS par l'URL que tu as reçue
+    const response = await fetch('https://proforms.top/api/https://app.proforms.top/f/pr0ef03387', {
+      method: 'POST',
+      body: formData
+      // NE PAS mettre 'Content-Type': 'multipart/form-data'
+      // Le navigateur le fait automatiquement
+    });
+
+    if (response.ok) {
+      showToast('✅ Contrat envoyé avec succès aux deux parties !', 'success');
+      return true;
+    } else {
+      const errorText = await response.text();
+      console.error('❌ Erreur Proforms:', errorText);
+      throw new Error(`Erreur ${response.status}`);
+    }
+
+  } catch (error) {
+    console.error('❌ Erreur Proforms:', error);
+    showToast('❌ Erreur: ' + error.message, 'error');
+    return false;
   }
+}
 
   // ==========================================================
   // 8. BOUTON "SIGNER ET ENVOYER"
@@ -1051,7 +1042,7 @@
       const container = document.getElementById('contractContainer');
       const pdfDataUrl = await generatePdf(container, data.photos || []);
 
-      await sendWithFormspree(pdfDataUrl, data);
+      await sendWithProforms(data, pdfDataUrl);
 
     } catch (error) {
       console.error('❌ Erreur:', error);
