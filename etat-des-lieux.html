@@ -6,9 +6,6 @@
   <title>État des lieux de départ</title>
 
   <style>
-    /* ============================================================
-       STYLES COMPLETS
-    ============================================================ */
     :root {
       --primary: #0f2b4a;
       --primary-light: #1a4068;
@@ -115,9 +112,7 @@
       box-shadow: var(--shadow-lg);
     }
 
-    .section {
-      margin-bottom: 28px;
-    }
+    .section { margin-bottom: 28px; }
     .section:last-child { margin-bottom: 0; }
 
     .section-title {
@@ -147,7 +142,6 @@
 
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 20px; }
     .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px 20px; }
-    .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 16px 20px; }
     .full-width { grid-column: 1 / -1; }
 
     .field {
@@ -188,7 +182,7 @@
     }
     .field textarea { min-height: 80px; resize: vertical; }
 
-    /* Partie contrôle du vélo */
+    /* Contrôle du vélo */
     .bike-part-item {
       display: flex;
       flex-direction: column;
@@ -211,9 +205,7 @@
       font-size: 14px;
       color: var(--primary);
     }
-    .bike-part-item .part-header .icon {
-      font-size: 18px;
-    }
+    .bike-part-item .part-header .icon { font-size: 18px; }
     .bike-part-item .part-controls {
       display: flex;
       gap: 10px;
@@ -552,7 +544,6 @@
     @media (max-width: 820px) {
       .grid-2 { grid-template-columns: 1fr; }
       .grid-3 { grid-template-columns: 1fr 1fr; }
-      .grid-4 { grid-template-columns: 1fr 1fr; }
       .accessories-grid { grid-template-columns: 1fr; }
       .signatures-grid { grid-template-columns: 1fr; }
       .document-header { padding: 24px 28px; }
@@ -567,7 +558,6 @@
       .document-header .meta-info { flex-direction: column; gap: 4px; }
       .form-body { padding: 16px 18px 24px; border-radius: 0 0 var(--radius) var(--radius); }
       .grid-3 { grid-template-columns: 1fr; }
-      .grid-4 { grid-template-columns: 1fr; }
       .actions { flex-direction: column; }
       .btn { width: 100%; justify-content: center; }
       .accessory-item { flex-direction: column; align-items: stretch; }
@@ -581,7 +571,6 @@
 <body>
 
 <div class="document-wrapper">
-
   <header class="document-header">
     <div class="badge">📋 Document officiel</div>
     <h1>État des lieux <span>vélo</span></h1>
@@ -594,9 +583,7 @@
   </header>
 
   <div class="form-body" id="contractContainer">
-
     <form id="etatForm" novalidate>
-
       <!-- SECTION 1 : PARTIES -->
       <div class="section">
         <div class="section-title"><span class="step">1</span>Parties prenantes</div>
@@ -645,10 +632,9 @@
                 <option value="fissure">Fissure</option>
                 <option value="cassé">Cassé</option>
               </select>
-              <input type="text" name="note_frame" class="part-note" placeholder="Remarque (optionnel)">
+              <input type="text" name="note_frame" class="part-note" placeholder="Remarque">
             </div>
           </div>
-
           <!-- Guidon -->
           <div class="bike-part-item">
             <div class="part-header"><span class="icon">🔄</span> Guidon</div>
@@ -662,10 +648,9 @@
                 <option value="torsadé">Torsadé</option>
                 <option value="cassé">Cassé</option>
               </select>
-              <input type="text" name="note_handlebar" class="part-note" placeholder="Remarque (optionnel)">
+              <input type="text" name="note_handlebar" class="part-note" placeholder="Remarque">
             </div>
           </div>
-
           <!-- Selle -->
           <div class="bike-part-item">
             <div class="part-header"><span class="icon">🪑</span> Selle</div>
@@ -679,10 +664,9 @@
                 <option value="cassé">Cassé</option>
                 <option value="manquant">Manquant</option>
               </select>
-              <input type="text" name="note_seat" class="part-note" placeholder="Remarque (optionnel)">
+              <input type="text" name="note_seat" class="part-note" placeholder="Remarque">
             </div>
           </div>
-
           <!-- Fourche -->
           <div class="bike-part-item">
             <div class="part-header"><span class="icon">🔧</span> Fourche</div>
@@ -696,10 +680,9 @@
                 <option value="fissure">Fissure</option>
                 <option value="cassé">Cassé</option>
               </select>
-              <input type="text" name="note_fork" class="part-note" placeholder="Remarque (optionnel)">
+              <input type="text" name="note_fork" class="part-note" placeholder="Remarque">
             </div>
           </div>
-
           <!-- Roue Avant -->
           <div class="bike-part-item">
             <div class="part-header"><span class="icon">⚫</span> Roue Avant</div>
@@ -713,10 +696,9 @@
                 <option value="cassé">Cassé</option>
                 <option value="manquant">Manquant</option>
               </select>
-              <input type="text" name="note_wheel_front" class="part-note" placeholder="Remarque (optionnel)">
+              <input type="text" name="note_wheel_front" class="part-note" placeholder="Remarque">
             </div>
           </div>
-
           <!-- Roue Arrière -->
           <div class="bike-part-item">
             <div class="part-header"><span class="icon">⚫</span> Roue Arrière</div>
@@ -730,10 +712,9 @@
                 <option value="cassé">Cassé</option>
                 <option value="manquant">Manquant</option>
               </select>
-              <input type="text" name="note_wheel_rear" class="part-note" placeholder="Remarque (optionnel)">
+              <input type="text" name="note_wheel_rear" class="part-note" placeholder="Remarque">
             </div>
           </div>
-
           <!-- Pneu Avant -->
           <div class="bike-part-item">
             <div class="part-header"><span class="icon">⭕</span> Pneu Avant</div>
@@ -746,10 +727,9 @@
                 <option value="fissuré">Fissuré</option>
                 <option value="manquant">Manquant</option>
               </select>
-              <input type="text" name="note_tire_front" class="part-note" placeholder="Remarque (optionnel)">
+              <input type="text" name="note_tire_front" class="part-note" placeholder="Remarque">
             </div>
           </div>
-
           <!-- Pneu Arrière -->
           <div class="bike-part-item">
             <div class="part-header"><span class="icon">⭕</span> Pneu Arrière</div>
@@ -762,10 +742,9 @@
                 <option value="fissuré">Fissuré</option>
                 <option value="manquant">Manquant</option>
               </select>
-              <input type="text" name="note_tire_rear" class="part-note" placeholder="Remarque (optionnel)">
+              <input type="text" name="note_tire_rear" class="part-note" placeholder="Remarque">
             </div>
           </div>
-
           <!-- Freins -->
           <div class="bike-part-item">
             <div class="part-header"><span class="icon">⛔</span> Freins</div>
@@ -779,10 +758,9 @@
                 <option value="cassé">Cassé</option>
                 <option value="manquant">Manquant</option>
               </select>
-              <input type="text" name="note_brakes" class="part-note" placeholder="Remarque (optionnel)">
+              <input type="text" name="note_brakes" class="part-note" placeholder="Remarque">
             </div>
           </div>
-
           <!-- Transmission -->
           <div class="bike-part-item">
             <div class="part-header"><span class="icon">⚙️</span> Transmission</div>
@@ -796,10 +774,9 @@
                 <option value="cassé">Cassé</option>
                 <option value="manquant">Manquant</option>
               </select>
-              <input type="text" name="note_transmission" class="part-note" placeholder="Remarque (optionnel)">
+              <input type="text" name="note_transmission" class="part-note" placeholder="Remarque">
             </div>
           </div>
-
           <!-- Chaîne -->
           <div class="bike-part-item">
             <div class="part-header"><span class="icon">🔗</span> Chaîne</div>
@@ -813,10 +790,9 @@
                 <option value="cassée">Cassée</option>
                 <option value="manquante">Manquante</option>
               </select>
-              <input type="text" name="note_chain" class="part-note" placeholder="Remarque (optionnel)">
+              <input type="text" name="note_chain" class="part-note" placeholder="Remarque">
             </div>
           </div>
-
           <!-- Pédales -->
           <div class="bike-part-item">
             <div class="part-header"><span class="icon">🦶</span> Pédales</div>
@@ -829,7 +805,7 @@
                 <option value="cassé">Cassé</option>
                 <option value="manquant">Manquant</option>
               </select>
-              <input type="text" name="note_pedals" class="part-note" placeholder="Remarque (optionnel)">
+              <input type="text" name="note_pedals" class="part-note" placeholder="Remarque">
             </div>
           </div>
         </div>
@@ -925,7 +901,6 @@
         <button type="button" class="btn btn-outline" id="saveEtatBtn">💾 Enregistrer localement</button>
         <button type="button" class="btn btn-outline" id="resetFormBtn">🔄 Réinitialiser</button>
       </div>
-
     </form>
   </div>
 </div>
@@ -942,10 +917,6 @@
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 
 <script>
-  // ==========================================================
-  // CODE JAVASCRIPT COMPLET - VERSION EMAILJS
-  // ==========================================================
-  
   'use strict';
 
   // ==========================================================
@@ -957,10 +928,7 @@
     templateID: 'template_sozwa7c'
   };
 
-  // Initialiser EmailJS
-  emailjs.init({
-    publicKey: EMAILJS_CONFIG.publicKey
-  });
+  emailjs.init({ publicKey: EMAILJS_CONFIG.publicKey });
 
   // ==========================================================
   // 1. DATE ACTUELLE
@@ -1031,11 +999,9 @@
       `;
       photosPreview.appendChild(div);
     });
-
     document.querySelectorAll('.photo-item .remove-photo').forEach(btn => {
       btn.addEventListener('click', function() {
-        const index = parseInt(this.dataset.index);
-        removePhoto(index);
+        removePhoto(parseInt(this.dataset.index));
       });
     });
   }
@@ -1049,8 +1015,7 @@
     for (const file of files) {
       if (!file.type.startsWith('image/')) continue;
       try {
-        const dataUrl = await compressImage(file);
-        photosDataUrls.push(dataUrl);
+        photosDataUrls.push(await compressImage(file));
       } catch (err) { console.error(err); }
     }
     renderPhotos();
@@ -1059,18 +1024,15 @@
 
   const dropZone = document.getElementById('photoDropZone');
   dropZone.addEventListener('click', () => photosInput.click());
-
   dropZone.addEventListener('dragover', (e) => {
     e.preventDefault();
     dropZone.style.borderColor = 'var(--accent)';
     dropZone.style.background = 'white';
   });
-
   dropZone.addEventListener('dragleave', () => {
     dropZone.style.borderColor = 'var(--gray-300)';
     dropZone.style.background = 'var(--gray-50)';
   });
-
   dropZone.addEventListener('drop', async (e) => {
     e.preventDefault();
     dropZone.style.borderColor = 'var(--gray-300)';
@@ -1083,8 +1045,7 @@
     for (const file of files) {
       if (!file.type.startsWith('image/')) continue;
       try {
-        const dataUrl = await compressImage(file);
-        photosDataUrls.push(dataUrl);
+        photosDataUrls.push(await compressImage(file));
       } catch (err) { console.error(err); }
     }
     renderPhotos();
@@ -1115,7 +1076,6 @@
     minWidth: 1.5, 
     maxWidth: 3 
   });
-  
   const sigPadRenter = new SignaturePad(canvasRenter, { 
     backgroundColor: 'white', 
     penColor: '#0f2b4a', 
@@ -1149,27 +1109,10 @@
   function getFormData() {
     const form = document.getElementById('etatForm');
     const data = Object.fromEntries(new FormData(form).entries());
-    
-    const extras = Array.from(form.querySelectorAll('input[name="extras"]:checked')).map(cb => cb.value);
-    data.extras = extras;
-    
-    const states = {};
-    extras.forEach(val => {
-      const sel = form.querySelector(`[name="state_${val}"]`);
-      const note = form.querySelector(`[name="note_${val}"]`);
-      states[val] = { 
-        state: sel ? sel.value || null : null, 
-        note: note ? note.value || null : null 
-      };
-    });
-    data.extras_states = states;
+    data.extras = Array.from(form.querySelectorAll('input[name="extras"]:checked')).map(cb => cb.value);
     data.photos = photosDataUrls;
-    
-    document.getElementById('signatureOwner').value = sigPadOwner.toDataURL();
-    document.getElementById('signatureRenter').value = sigPadRenter.toDataURL();
     data.signatureOwner = sigPadOwner.toDataURL();
     data.signatureRenter = sigPadRenter.toDataURL();
-    
     return data;
   }
 
@@ -1191,33 +1134,26 @@
   async function generatePdf(containerEl, photos = []) {
     try {
       const { jsPDF } = window.jspdf;
-      
       const canvas = await html2canvas(containerEl, { 
         scale: 2, 
         useCORS: true, 
         backgroundColor: '#ffffff', 
         logging: false 
       });
-      
       const imgData = canvas.toDataURL('image/jpeg', 0.95);
       const doc = new jsPDF({ unit: 'pt', format: 'a4' });
       const pageWidth = doc.internal.pageSize.getWidth();
       const margin = 20;
       const usableWidth = pageWidth - margin * 2;
-      
       const imgProps = doc.getImageProperties(imgData);
-      const imgRatio = imgProps.width / imgProps.height;
-      const imgHeight = usableWidth / imgRatio;
+      const imgHeight = usableWidth / (imgProps.width / imgProps.height);
       doc.addImage(imgData, 'JPEG', margin, margin, usableWidth, imgHeight);
-
       for (const dataUrl of photos.slice(0, 6)) {
         doc.addPage();
         const pImgProps = doc.getImageProperties(dataUrl);
-        const pRatio = pImgProps.width / pImgProps.height;
-        const pHeight = usableWidth / pRatio;
+        const pHeight = usableWidth / (pImgProps.width / pImgProps.height);
         doc.addImage(dataUrl, 'JPEG', margin, margin, usableWidth, pHeight);
       }
-
       return doc.output('datauristring');
     } catch (error) {
       console.error('Erreur génération PDF:', error);
@@ -1225,17 +1161,13 @@
     }
   }
 
-   // ==========================================================
-  // 7. ENVOI VIA EMAILJS (avec hébergement externe du PDF)
   // ==========================================================
-   // ==========================================================
   // 7. ENVOI VIA EMAILJS (sans upload externe)
   // ==========================================================
   async function sendWithEmailJS(data, pdfDataUrl) {
     try {
       showToast('📧 Préparation de l\'email...', 'info');
 
-      // 1. Construire le rapport des contrôles vélo
       const bikeParts = ['frame', 'handlebar', 'seat', 'fork', 'wheel_front', 'wheel_rear', 
                          'tire_front', 'tire_rear', 'brakes', 'transmission', 'chain', 'pedals'];
       const partNames = {
@@ -1253,15 +1185,9 @@
         }
       });
 
-      // 2. Créer un lien de téléchargement local (valable dans la session)
-      // Le lien ne fonctionne QUE si l'application est encore ouverte
-      const downloadLink = window.location.href + '?pdf=' + encodeURIComponent(pdfDataUrl);
-
-      // 3. Préparer les données du template
       const templateParams = {
         to_email: data.ownerEmail || '',
         cc_email: data.renterEmail || '',
-        
         proprietaire: data.ownerName || '',
         proprietaire_email: data.ownerEmail || '',
         locataire: data.renterName || '',
@@ -1273,12 +1199,10 @@
         accessoires: (data.extras || []).join(', ') || 'Aucun',
         date_signature: new Date().toLocaleDateString('fr-FR'),
         controle_velo: bikeReport || 'Aucun contrôle effectué',
-        
-        // Message d'instruction pour télécharger le PDF
-        instruction_pdf: '📄 Ouvrez l\'application et cliquez sur "Télécharger PDF" pour récupérer le document.'
+        lien_application: 'https://jmpasqual17-design.github.io/etat-lieux.html',
+        instruction: '📄 Le PDF a été généré. Ouvrez l\'application et cliquez sur "Télécharger PDF" pour le récupérer.'
       };
 
-      // 4. Envoyer l'email avec EmailJS
       showToast('📧 Envoi de l\'email...', 'info');
       const response = await emailjs.send(
         EMAILJS_CONFIG.serviceID,
@@ -1299,21 +1223,19 @@
       return false;
     }
   }
+
   // ==========================================================
   // 8. BOUTON "SIGNER ET ENVOYER"
   // ==========================================================
   document.getElementById('generateSendBtn').addEventListener('click', async function() {
     console.log('🖱️ Clic sur "Signer et envoyer"');
-    
     if (!checkSignatures()) return;
-    
     this.disabled = true;
     const originalText = this.innerHTML;
     this.innerHTML = '<span class="spinner"></span> Envoi en cours...';
 
     try {
       const data = getFormData();
-      
       if (!data.ownerEmail || !data.renterEmail) {
         showToast('❌ Les emails sont obligatoires', 'error');
         this.disabled = false;
@@ -1324,9 +1246,7 @@
       showToast('📄 Génération du PDF...', 'info');
       const container = document.getElementById('contractContainer');
       const pdfDataUrl = await generatePdf(container, data.photos || []);
-
       await sendWithEmailJS(data, pdfDataUrl);
-
     } catch (error) {
       console.error('❌ Erreur:', error);
       showToast('❌ ' + error.message, 'error');
@@ -1343,18 +1263,15 @@
     try {
       this.disabled = true;
       this.textContent = '⏳ Génération...';
-      
       const data = getFormData();
       const container = document.getElementById('contractContainer');
       const pdfDataUrl = await generatePdf(container, data.photos || []);
-      
       const link = document.createElement('a');
       link.href = pdfDataUrl;
       link.download = `etat-lieux-${data.renterName || 'location'}.pdf`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      
       showToast('✅ PDF téléchargé !', 'success');
     } catch (error) {
       console.error('❌ Erreur:', error);
@@ -1390,34 +1307,7 @@
   });
 
   // ==========================================================
-  // 12. PRÉ-REMPLISSAGE DEPUIS L'URL
-  // ==========================================================
-  (function() {
-    const params = new URLSearchParams(window.location.search);
-    params.forEach((value, key) => {
-      if (key === 'extras') return;
-      const el = document.querySelector(`[name="${key}"]`);
-      if (el) el.value = decodeURIComponent(value);
-    });
-
-    const extras = params.get('extras');
-    if (extras) {
-      extras.split(',').map(s => s.trim()).forEach(val => {
-        const cb = document.querySelector(`input[name="extras"][value="${val}"]`);
-        if (cb) cb.checked = true;
-      });
-    }
-
-    for (const [k, v] of params.entries()) {
-      if (k.startsWith('state_') || k.startsWith('note_')) {
-        const el = document.querySelector(`[name="${k}"]`);
-        if (el) el.value = decodeURIComponent(v);
-      }
-    }
-  })();
-
-  // ==========================================================
-  // 13. CHARGEMENT DES DONNÉES SAUVEGARDÉES
+  // 12. CHARGEMENT DES DONNÉES SAUVEGARDÉES
   // ==========================================================
   (function() {
     const saved = localStorage.getItem('expressVeloEtat');
@@ -1425,32 +1315,20 @@
       try {
         const data = JSON.parse(saved);
         Object.keys(data).forEach(key => {
-          if (key === 'extras' || key === 'extras_states' || key === 'photos' || key === 'signatureOwner' || key === 'signatureRenter') return;
+          if (['extras', 'photos', 'signatureOwner', 'signatureRenter'].includes(key)) return;
           const el = document.querySelector(`[name="${key}"]`);
           if (el) el.value = data[key];
         });
-        
         if (data.extras) {
           data.extras.forEach(val => {
             const cb = document.querySelector(`input[name="extras"][value="${val}"]`);
             if (cb) cb.checked = true;
           });
         }
-        
-        if (data.extras_states) {
-          Object.keys(data.extras_states).forEach(key => {
-            const stateEl = document.querySelector(`[name="state_${key}"]`);
-            const noteEl = document.querySelector(`[name="note_${key}"]`);
-            if (stateEl && data.extras_states[key].state) stateEl.value = data.extras_states[key].state;
-            if (noteEl && data.extras_states[key].note) noteEl.value = data.extras_states[key].note;
-          });
-        }
-        
         if (data.photos && data.photos.length > 0) {
           photosDataUrls = data.photos;
           renderPhotos();
         }
-        
         console.log('📂 Données sauvegardées chargées');
       } catch (e) {
         console.error('Erreur chargement sauvegarde:', e);
@@ -1459,7 +1337,7 @@
   })();
 
   // ==========================================================
-  // 14. INITIALISATION
+  // 13. INITIALISATION
   // ==========================================================
   updateSignatureStatus();
   console.log('🚀 Application prête avec EmailJS !');
