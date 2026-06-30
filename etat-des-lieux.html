@@ -1228,7 +1228,7 @@
    // ==========================================================
   // 7. ENVOI VIA EMAILJS (avec hébergement externe du PDF)
   // ==========================================================
-  // ==========================================================
+    // ==========================================================
   // 7. ENVOI VIA EMAILJS (avec GoFile.io - CORS OK)
   // ==========================================================
   async function sendWithEmailJS(data, pdfDataUrl) {
@@ -1239,7 +1239,7 @@
       const pdfResponse = await fetch(pdfDataUrl);
       const pdfBlob = await pdfResponse.blob();
 
-      // 2. Upload sur GoFile.io (gratuit, CORS OK)
+      // 2. Upload sur GoFile.io (gratuit, CORS OK, 10GB max)
       const formData = new FormData();
       formData.append('file', pdfBlob);
 
@@ -1323,7 +1323,6 @@
       return false;
     }
   }
-
   // ==========================================================
   // 8. BOUTON "SIGNER ET ENVOYER"
   // ==========================================================
