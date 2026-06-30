@@ -1162,44 +1162,13 @@
   }
 
   // ==========================================================
-  // 7. ENVOI VIA EMAILJS (avec File.io + proxy CORS)
+  // 7. ENVOI VIA EMAILJS (sans upload externe - version stable)
   // ==========================================================
   async function sendWithEmailJS(data, pdfDataUrl) {
     try {
-      showToast('📤 Upload du PDF...', 'info');
+      showToast('📧 Préparation de l\'email...', 'info');
 
-      // 1. Convertir le dataURL en Blob
-      const pdfResponse = await fetch(pdfDataUrl);
-      const pdfBlob = await pdfResponse.blob();
-
-      // 2. Upload sur File.io via proxy CORS
-      const formData = new FormData();
-      formData.append('file', pdfBlob, 'etat-lieux.pdf');
-
-      // Utiliser un proxy CORS gratuit
-      const proxyUrl = 'https://corsproxy.io/?';
-      const uploadResponse = await fetch(proxyUrl + encodeURIComponent('https://file.io/'), {
-        method: 'POST',
-        body: formData
-      });
-
-      if (!uploadResponse.ok) {
-        const errorText = await uploadResponse.text();
-        console.error('Erreur upload:', errorText);
-        throw new Error(`Erreur upload (${uploadResponse.status})`);
-      }
-
-      const uploadResult = await uploadResponse.json();
-      
-      if (!uploadResult.success) {
-        throw new Error('Upload échoué: ' + (uploadResult.message || ''));
-      }
-      
-      const downloadUrl = uploadResult.link;
-
-      console.log('📎 Lien de téléchargement :', downloadUrl);
-
-      // 3. Construire le rapport des contrôles vélo
+      // 1. Construire le rapport des contrôles vélo
       const bikeParts = ['frame', 'handlebar', 'seat', 'fork', 'wheel_front', 'wheel_rear', 
                          'tire_front', 'tire_rear', 'brakes', 'transmission', 'chain', 'pedals'];
       const partNames = {
@@ -1217,7 +1186,15 @@
         }
       });
 
-      // 4. Préparer les données du template
+      // 2. Sauvegarder le PDF dans localStorage pour le récupérer plus tard
+      try {
+        localStorage.setItem('dernierPDF', pdfDataUrl);
+        console.log('💾 PDF sauvegardé localement');
+      } catch (e) {
+        console.warn('Impossible de sauvegarder le PDF (trop volumineux)');
+      }
+
+      // 3. Préparer les données du template (UNIQUEMENT du texte - pas de fichier)
       const templateParams = {
         to_email: data.ownerEmail || '',
         cc_email: data.renterEmail || '',
@@ -1234,10 +1211,11 @@
         date_signature: new Date().toLocaleDateString('fr-FR'),
         controle_velo: bikeReport || 'Aucun contrôle effectué',
         
-        lien_pdf: downloadUrl
+        // Lien vers l'application (pas de fichier)
+        lien_application: 'https://jmpasqual17-design.github.io/'
       };
 
-      // 5. Envoyer l'email avec EmailJS
+      // 4. Envoyer l'email avec EmailJS
       showToast('📧 Envoi de l\'email...', 'info');
       const response = await emailjs.send(
         EMAILJS_CONFIG.serviceID,
