@@ -1234,11 +1234,34 @@
 // ==========================================================
 // 7. ENVOI VIA EMAILJS (avec hébergement externe du PDF)
 // ==========================================================
+// ==========================================================
+// 7. ENVOI VIA EMAILJS (avec hébergement externe)
+// ==========================================================
 async function sendWithEmailJS(data, pdfDataUrl) {
   try {
-    showToast('📧 Envoi du contrat...', 'info');
+    showToast('📤 Upload du PDF...', 'info');
 
-    // 1. Construire le rapport des contrôles vélo
+    // 1. Convertir le dataURL en Blob
+    const pdfResponse = await fetch(pdfDataUrl);
+    const pdfBlob = await pdfResponse.blob();
+
+    // 2. Upload sur tmpfiles.org (gratuit, sans compte, 1GB max)
+    const formData = new FormData();
+    formData.append('file', pdfBlob, 'etat-lieux.pdf');
+
+    const uploadResponse = await fetch('https://tmpfiles.org/api/v1/upload', {
+      method: 'POST',
+      body: formData
+    });
+
+    if (!uploadResponse.ok) {
+      throw new Error('Erreur upload PDF');
+    }
+
+    const uploadResult = await uploadResponse.json();
+    const downloadUrl = uploadResult.data.url;
+
+    // 3. Construire le rapport des contrôles vélo (texte uniquement)
     const bikeParts = ['frame', 'handlebar', 'seat', 'fork', 'wheel_front', 'wheel_rear', 
                        'tire_front', 'tire_rear', 'brakes', 'transmission', 'chain', 'pedals'];
     const partNames = {
@@ -1256,31 +1279,7 @@ async function sendWithEmailJS(data, pdfDataUrl) {
       }
     });
 
-    // 2. Envoyer le PDF vers un hébergeur gratuit
-    showToast('📤 Téléchargement du PDF...', 'info');
-    
-    // Convertir le dataURL en Blob
-    const pdfResponse = await fetch(pdfDataUrl);
-    const pdfBlob = await pdfResponse.blob();
-    
-    // Créer un FormData pour l'upload
-    const uploadData = new FormData();
-    uploadData.append('file', pdfBlob, 'etat-lieux.pdf');
-
-    // Upload sur tmpfiles.org (gratuit, sans compte)
-    const uploadResponse = await fetch('https://tmpfiles.org/api/v1/upload', {
-      method: 'POST',
-      body: uploadData
-    });
-
-    if (!uploadResponse.ok) {
-      throw new Error('Erreur upload PDF');
-    }
-
-    const uploadResult = await uploadResponse.json();
-    const downloadUrl = uploadResult.data.url;
-
-    // 3. Préparer les données du template EmailJS (avec lien de téléchargement)
+    // 4. Préparer les données du template (texte uniquement, < 50Kb)
     const templateParams = {
       to_email: data.ownerEmail || '',
       cc_email: data.renterEmail || '',
@@ -1297,11 +1296,11 @@ async function sendWithEmailJS(data, pdfDataUrl) {
       date_signature: new Date().toLocaleDateString('fr-FR'),
       controle_velo: bikeReport || 'Aucun contrôle effectué',
       
-      // Lien de téléchargement du PDF (hébergé sur tmpfiles.org)
-      lien_pdf: `📎 Téléchargez l'état des lieux complet ici : ${downloadUrl}`
+      // ⭐ Lien de téléchargement (texte uniquement, pas de fichier)
+      lien_pdf: downloadUrl
     };
 
-    // 4. Envoyer l'email avec EmailJS
+    // 5. Envoyer l'email avec EmailJS (uniquement du texte)
     showToast('📧 Envoi de l\'email...', 'info');
     const response = await emailjs.send(
       EMAILJS_CONFIG.serviceID,
@@ -1317,9 +1316,11 @@ async function sendWithEmailJS(data, pdfDataUrl) {
     }
 
   } catch (error) {
-    console.error('❌ Erreur EmailJS:', error);
+    console.error('❌ Erreur:', error);
     showToast('❌ Erreur: ' + error.message, 'error');
     return false;
+  }
+}
   }
 }
     
