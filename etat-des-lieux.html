@@ -1228,8 +1228,8 @@
    // ==========================================================
   // 7. ENVOI VIA EMAILJS (avec hébergement externe du PDF)
   // ==========================================================
-   // ==========================================================
-  // 7. ENVOI VIA EMAILJS (avec Pixeldrain)
+  // ==========================================================
+  // 7. ENVOI VIA EMAILJS (avec hébergement externe)
   // ==========================================================
   async function sendWithEmailJS(data, pdfDataUrl) {
     try {
@@ -1239,21 +1239,29 @@
       const pdfResponse = await fetch(pdfDataUrl);
       const pdfBlob = await pdfResponse.blob();
 
-      // 2. Upload sur Pixeldrain (gratuit, 10GB max, CORS OK)
-      const uploadResponse = await fetch('https://pixeldrain.com/api/file/', {
+      // 2. Upload sur File.io (gratuit, 100MB max)
+      // Attention : le fichier est supprimé après le 1er téléchargement
+      const formData = new FormData();
+      formData.append('file', pdfBlob, 'etat-lieux.pdf');
+
+      const uploadResponse = await fetch('https://file.io/', {
         method: 'POST',
-        body: pdfBlob,
-        headers: { 'Content-Type': 'application/pdf' }
+        body: formData
       });
 
       if (!uploadResponse.ok) {
         const errorText = await uploadResponse.text();
-        console.error('Erreur Pixeldrain:', errorText);
-        throw new Error(`Erreur upload PDF sur Pixeldrain (${uploadResponse.status})`);
+        console.error('Erreur File.io:', errorText);
+        throw new Error(`Erreur upload (${uploadResponse.status})`);
       }
 
       const uploadResult = await uploadResponse.json();
-      const downloadUrl = `https://pixeldrain.com/u/${uploadResult.id}`;
+      
+      if (!uploadResult.success) {
+        throw new Error('Upload échoué: ' + (uploadResult.message || ''));
+      }
+      
+      const downloadUrl = uploadResult.link;
 
       console.log('📎 Lien de téléchargement :', downloadUrl);
 
