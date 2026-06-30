@@ -915,7 +915,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-
+<script src="https://cdn.jsdelivr.net/npm/web3.storage@4.5.5/dist/bundle.esm.min.js"></script>
 <script>
   'use strict';
 
@@ -1161,13 +1161,28 @@
     }
   }
 
-  // ==========================================================
-  // 7. ENVOI VIA EMAILJS (sans upload externe)
+   // ==========================================================
+  // 7. ENVOI VIA EMAILJS (avec Web3.Storage)
   // ==========================================================
   async function sendWithEmailJS(data, pdfDataUrl) {
     try {
-      showToast('📧 Préparation de l\'email...', 'info');
+      showToast('📤 Upload du PDF...', 'info');
 
+      // 1. Convertir le dataURL en Blob
+      const pdfResponse = await fetch(pdfDataUrl);
+      const pdfBlob = await pdfResponse.blob();
+
+      // 2. Upload sur Web3.Storage (gratuit, 5GB)
+      const { Web3Storage } = window;
+      const client = new Web3Storage({ token: 'VOTRE_TOKEN_WEB3STORAGE' });
+      
+      const file = new File([pdfBlob], 'etat-lieux.pdf', { type: 'application/pdf' });
+      const cid = await client.put([file]);
+      const downloadUrl = `https://${cid}.ipfs.w3s.link/etat-lieux.pdf`;
+
+      console.log('📎 Lien de téléchargement :', downloadUrl);
+
+      // 3. Construire le rapport des contrôles vélo
       const bikeParts = ['frame', 'handlebar', 'seat', 'fork', 'wheel_front', 'wheel_rear', 
                          'tire_front', 'tire_rear', 'brakes', 'transmission', 'chain', 'pedals'];
       const partNames = {
@@ -1185,9 +1200,11 @@
         }
       });
 
+      // 4. Préparer les données du template
       const templateParams = {
         to_email: data.ownerEmail || '',
         cc_email: data.renterEmail || '',
+        
         proprietaire: data.ownerName || '',
         proprietaire_email: data.ownerEmail || '',
         locataire: data.renterName || '',
@@ -1199,10 +1216,11 @@
         accessoires: (data.extras || []).join(', ') || 'Aucun',
         date_signature: new Date().toLocaleDateString('fr-FR'),
         controle_velo: bikeReport || 'Aucun contrôle effectué',
-        lien_application: 'https://jmpasqual17-design.github.io/etat-lieux.html',
-        instruction: '📄 Le PDF a été généré. Ouvrez l\'application et cliquez sur "Télécharger PDF" pour le récupérer.'
+        
+        lien_pdf: downloadUrl
       };
 
+      // 5. Envoyer l'email avec EmailJS
       showToast('📧 Envoi de l\'email...', 'info');
       const response = await emailjs.send(
         EMAILJS_CONFIG.serviceID,
