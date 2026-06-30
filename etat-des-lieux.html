@@ -1237,6 +1237,9 @@
 // ==========================================================
 // 7. ENVOI VIA EMAILJS (avec hébergement externe)
 // ==========================================================
+// ==========================================================
+// 7. ENVOI VIA EMAILJS (avec hébergement externe)
+// ==========================================================
 async function sendWithEmailJS(data, pdfDataUrl) {
   try {
     showToast('📤 Upload du PDF...', 'info');
@@ -1261,7 +1264,7 @@ async function sendWithEmailJS(data, pdfDataUrl) {
     const uploadResult = await uploadResponse.json();
     const downloadUrl = uploadResult.data.url;
 
-    // 3. Construire le rapport des contrôles vélo (texte uniquement)
+    // 3. Construire le rapport des contrôles vélo
     const bikeParts = ['frame', 'handlebar', 'seat', 'fork', 'wheel_front', 'wheel_rear', 
                        'tire_front', 'tire_rear', 'brakes', 'transmission', 'chain', 'pedals'];
     const partNames = {
@@ -1279,7 +1282,7 @@ async function sendWithEmailJS(data, pdfDataUrl) {
       }
     });
 
-    // 4. Préparer les données du template (texte uniquement, < 50Kb)
+    // 4. Préparer les données du template (texte uniquement)
     const templateParams = {
       to_email: data.ownerEmail || '',
       cc_email: data.renterEmail || '',
@@ -1296,7 +1299,7 @@ async function sendWithEmailJS(data, pdfDataUrl) {
       date_signature: new Date().toLocaleDateString('fr-FR'),
       controle_velo: bikeReport || 'Aucun contrôle effectué',
       
-      // ⭐ Lien de téléchargement (texte uniquement, pas de fichier)
+      // Lien de téléchargement
       lien_pdf: downloadUrl
     };
 
@@ -1319,8 +1322,6 @@ async function sendWithEmailJS(data, pdfDataUrl) {
     console.error('❌ Erreur:', error);
     showToast('❌ Erreur: ' + error.message, 'error');
     return false;
-  }
-}
   }
 }
     
