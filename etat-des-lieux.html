@@ -1161,8 +1161,8 @@
     }
   }
 
-   // ==========================================================
-  // 7. ENVOI VIA EMAILJS (avec Web3.Storage)
+  // ==========================================================
+  // 7. ENVOI VIA EMAILJS (avec File.io + proxy CORS)
   // ==========================================================
   async function sendWithEmailJS(data, pdfDataUrl) {
     try {
@@ -1172,13 +1172,30 @@
       const pdfResponse = await fetch(pdfDataUrl);
       const pdfBlob = await pdfResponse.blob();
 
-      // 2. Upload sur Web3.Storage (gratuit, 5GB)
-      const { Web3Storage } = window;
-      const client = new Web3Storage({ token: 'VOTRE_TOKEN_WEB3STORAGE' });
+      // 2. Upload sur File.io via proxy CORS
+      const formData = new FormData();
+      formData.append('file', pdfBlob, 'etat-lieux.pdf');
+
+      // Utiliser un proxy CORS gratuit
+      const proxyUrl = 'https://corsproxy.io/?';
+      const uploadResponse = await fetch(proxyUrl + encodeURIComponent('https://file.io/'), {
+        method: 'POST',
+        body: formData
+      });
+
+      if (!uploadResponse.ok) {
+        const errorText = await uploadResponse.text();
+        console.error('Erreur upload:', errorText);
+        throw new Error(`Erreur upload (${uploadResponse.status})`);
+      }
+
+      const uploadResult = await uploadResponse.json();
       
-      const file = new File([pdfBlob], 'etat-lieux.pdf', { type: 'application/pdf' });
-      const cid = await client.put([file]);
-      const downloadUrl = `https://${cid}.ipfs.w3s.link/etat-lieux.pdf`;
+      if (!uploadResult.success) {
+        throw new Error('Upload échoué: ' + (uploadResult.message || ''));
+      }
+      
+      const downloadUrl = uploadResult.link;
 
       console.log('📎 Lien de téléchargement :', downloadUrl);
 
@@ -1241,7 +1258,6 @@
       return false;
     }
   }
-
   // ==========================================================
   // 8. BOUTON "SIGNER ET ENVOYER"
   // ==========================================================
